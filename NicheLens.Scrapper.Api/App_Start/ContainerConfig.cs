@@ -6,6 +6,7 @@ using System.Web.Http.Validation;
 
 using Ab;
 using Ab.Amazon.Configuration;
+using Ab.Azure;
 using Ab.Azure.Configuration;
 using Ab.Configuration;
 using Ab.Reflection;
@@ -18,7 +19,7 @@ using FluentValidation.WebApi;
 using Microsoft.WindowsAzure.Storage.Table;
 
 using SimpleInjector;
-using SimpleInjector.Extensions;
+using SimpleInjector.Integration.WebApi;
 
 namespace NicheLens.Scrapper.Api
 {
@@ -27,6 +28,7 @@ namespace NicheLens.Scrapper.Api
 		public static Container CreateContainer()
 		{
 			Container container = new Container();
+			container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
 
 			RegisterTypes(container);
 
@@ -36,29 +38,29 @@ namespace NicheLens.Scrapper.Api
 		private static void RegisterTypes(Container container)
 		{
 			#region Providers
-			container.RegisterSingle<IConfigurationProvider, WebConfigurationProvider>();
+			container.RegisterSingleton<IConfigurationProvider, WebConfigurationProvider>();
 
-			container.RegisterSingle<IEnvironmentProvider, ConfigurationEnvironmentProvider>();
+			container.RegisterSingleton<IEnvironmentProvider, ConfigurationEnvironmentProvider>();
 
-			container.RegisterSingle<IConnectionStringProvider, ConfigurationConnectionStringProvider>();
+			container.RegisterSingleton<IConnectionStringProvider, ConfigurationConnectionStringProvider>();
 
-			container.RegisterSingle<IDateTimeProvider, UtcDateTimeProvider>();
+			container.RegisterSingleton<IDateTimeProvider, UtcDateTimeProvider>();
 
-			container.RegisterSingle<IAssemblyProvider, ReflectionAssemblyProvider>();
+			container.RegisterSingleton<IAssemblyProvider, ReflectionAssemblyProvider>();
 			#endregion
 
 			#region Configuration
-			container.RegisterFactory<AzureOptions, AzureOptionsFactory>();
+			container.RegisterFactory<AzureOptions, AzureOptionsFactory>(Lifestyle.Singleton);
 
 			container.Register<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>();
 			container.Register<IOptionsProvider<AwsOptions>, AzureAwsOptionsProvider>();
-			container.RegisterDecorator(typeof(IOptionsProvider<AwsOptions>), typeof(CachingOptionsProvider<AwsOptions>));
+			container.RegisterDecorator<IOptionsProvider<AwsOptions>, OptionsProviderAdapter<AwsOptions>>(Lifestyle.Singleton);
 			container.RegisterFactory<AwsOptions, RoundrobinAwsOptionsFactory>(Lifestyle.Singleton);
 			#endregion
 
 			#region Web API
 			// Filters
-			container.RegisterAll<IFilter>(typeof(WebApiContrib.Filters.ValidationAttribute));
+			container.RegisterCollection<IFilter>(new[] { typeof(WebApiContrib.Filters.ValidationAttribute) });
 
 			// Handlers
 
@@ -66,13 +68,19 @@ namespace NicheLens.Scrapper.Api
 			container.Register<IExceptionLogger, ElmahExceptionLogger>();
 
 			// Controllers
-			// TODO: remove arr once the new version is pushed
-			container.RegisterWebApiControllers(GlobalConfiguration.Configuration, new[] { Assembly.GetExecutingAssembly() });
+			container.RegisterWebApiControllers(GlobalConfiguration.Configuration, Assembly.GetExecutingAssembly());
 			#endregion
 
 			#region Fluent Validation
 			container.Register<FluentValidation.IValidatorFactory, AttributedValidatorFactory>();
 			container.Register<ModelValidatorProvider, FluentValidationModelValidatorProvider>();
+			#endregion
+
+			#region Azure
+			container.Register<IBlobClient, AzureBlobClient>();
+			container.Register<ITableClient, AzureTableClient>();
+			container.Register<IAzureContainerClient, AzureContainerClient>();
+			container.Register<IAzureClient, AzureClient>();
 			#endregion
 		}
 	}

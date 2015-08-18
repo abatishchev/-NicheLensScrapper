@@ -1,9 +1,11 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
+
+using FluentAssertions;
 
 using SimpleInjector;
+using SimpleInjector.Integration.WebApi;
+
 using Xunit;
-using FluentAssertions;
 
 namespace NicheLens.Scrapper.Api.Tests
 {
@@ -17,10 +19,20 @@ namespace NicheLens.Scrapper.Api.Tests
 			WebApiConfig.Configure(new HttpConfiguration(), container);
 
 			// Act
-			Action action = () => container.Verify(VerificationOption.VerifyOnly);
+			container.Verify(VerificationOption.VerifyOnly);
+		}
 
-			// Asssert
-			action.ShouldNotThrow();
+		[Fact]
+		public void Container_DefaultScopedLifestyle_Should_Be_Of_Type_WebApiRequestLifestyle()
+		{
+			// Arrange
+			var container = ContainerConfig.CreateContainer();
+
+			// Act
+			var lifestyle = container.Options.DefaultScopedLifestyle;
+
+			// Act
+			lifestyle.Should().BeOfType<WebApiRequestLifestyle>();
 		}
 	}
 }
