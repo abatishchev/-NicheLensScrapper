@@ -11,11 +11,12 @@ using Ab.Azure.Configuration;
 using Ab.Configuration;
 using Ab.Reflection;
 using Ab.SimpleInjector;
+using Ab.WebApi.AppInsights;
 
-using Elmah.Contrib.WebApi;
 using FluentValidation.Attributes;
 using FluentValidation.WebApi;
 
+using Microsoft.ApplicationInsights;
 using Microsoft.WindowsAzure.Storage.Table;
 
 using SimpleInjector;
@@ -60,15 +61,29 @@ namespace NicheLens.Scrapper.Api
 
 			#region Web API
 			// Filters
-			container.RegisterCollection<IFilter>(new[] { typeof(WebApiContrib.Filters.ValidationAttribute) });
+			container.RegisterCollection<IFilter>(
+				new[]
+				{
+					typeof(AiTrackingFilter),
+					typeof(WebApiContrib.Filters.ValidationAttribute)
+				});
 
 			// Handlers
 
 			// Services
-			container.Register<IExceptionLogger, ElmahExceptionLogger>();
+			container.RegisterCollection<IExceptionLogger>(
+				new[]
+				{
+					typeof(AiExceptionLogger),
+					typeof(Elmah.Contrib.WebApi.ElmahExceptionLogger)
+				});
 
 			// Controllers
 			container.RegisterWebApiControllers(GlobalConfiguration.Configuration, Assembly.GetExecutingAssembly());
+			#endregion
+
+			#region AppInsights
+			container.Register<TelemetryClient>(() => new TelemetryClient());
 			#endregion
 
 			#region Fluent Validation

@@ -60,7 +60,7 @@ namespace NicheLens.Scrapper.Api
 
 			container.ReplaceService<ModelValidatorProvider>(services);
 
-			container.AddService<IExceptionLogger>(services);
+			container.AddServices<IExceptionLogger>(services);
 		}
 
 		private static void ConfigureFormatters(MediaTypeFormatterCollection formatters)
