@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.Api.Client", "NicheLens.Scrapper.Api.Client\NicheLens.Scrapper.Api.Client.csproj", "{89697AE0-49AF-45E1-A347-B15F47BE2A5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.WebJobs", "NicheLens.Scrapper.WebJobs\NicheLens.Scrapper.WebJobs.csproj", "{88920C8F-BBF7-4F27-8DF7-CFC6FD9E86FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,10 @@ Global
 		{83A220BB-5BFF-4753-97BB-E83E02962E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83A220BB-5BFF-4753-97BB-E83E02962E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83A220BB-5BFF-4753-97BB-E83E02962E97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89697AE0-49AF-45E1-A347-B15F47BE2A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89697AE0-49AF-45E1-A347-B15F47BE2A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89697AE0-49AF-45E1-A347-B15F47BE2A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89697AE0-49AF-45E1-A347-B15F47BE2A5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88920C8F-BBF7-4F27-8DF7-CFC6FD9E86FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{88920C8F-BBF7-4F27-8DF7-CFC6FD9E86FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88920C8F-BBF7-4F27-8DF7-CFC6FD9E86FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
