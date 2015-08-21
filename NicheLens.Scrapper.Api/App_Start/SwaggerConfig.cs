@@ -3,13 +3,13 @@ using WebActivatorEx;
 using NicheLens.Scrapper.Api;
 using Swashbuckle.Application;
 
-[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Initialize")]
+[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
 namespace NicheLens.Scrapper.Api
 {
     public class SwaggerConfig
     {
-        public static void Initialize()
+        public static void Register()
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
 

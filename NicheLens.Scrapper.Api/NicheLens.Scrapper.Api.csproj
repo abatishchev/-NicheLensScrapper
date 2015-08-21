@@ -46,7 +46,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Amazon">
-      <HintPath>..\packages\Ab.Amazon.0.1.5\lib\net45\Ab.Amazon.dll</HintPath>
+      <HintPath>..\packages\Ab.Amazon.0.1.7\lib\net45\Ab.Amazon.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ab.Amazon.Azure">
+      <HintPath>..\packages\Ab.Amazon.Azure.0.1.2\lib\net45\Ab.Amazon.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Azure">
@@ -58,7 +62,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.WebApi">
-      <HintPath>..\packages\Ab.WebApi.0.1.1\lib\net45\Ab.WebApi.dll</HintPath>
+      <HintPath>..\packages\Ab.WebApi.0.1.2\lib\net45\Ab.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.WebApi.AppInsights">
@@ -129,10 +133,6 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.Web.TelemetryChannel.1.0.0\lib\net45\Microsoft.ApplicationInsights.Web.TelemetryChannel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Azure.AppService.ApiApps.Service, Version=0.9.64.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Azure.AppService.ApiApps.Service.0.9.64\lib\net45\Microsoft.Azure.AppService.ApiApps.Service.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Azure.KeyVault.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.KeyVault.Core.1.0.0\lib\net40\Microsoft.Azure.KeyVault.Core.dll</HintPath>
       <Private>True</Private>
@@ -149,6 +149,10 @@
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.6.4\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.3.1.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
       <Private>True</Private>
@@ -161,16 +165,16 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector, Version=3.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.3.0.0\lib\net45\SimpleInjector.dll</HintPath>
+    <Reference Include="SimpleInjector, Version=3.0.1.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.0.1\lib\net45\SimpleInjector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector.Extensions.ExecutionContextScoping, Version=2.4.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.Extensions.ExecutionContextScoping.3.0.0\lib\net45\SimpleInjector.Extensions.ExecutionContextScoping.dll</HintPath>
+      <HintPath>..\packages\SimpleInjector.Extensions.ExecutionContextScoping.3.0.1\lib\net45\SimpleInjector.Extensions.ExecutionContextScoping.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector.Integration.WebApi, Version=3.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.0.0\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
+    <Reference Include="SimpleInjector.Integration.WebApi, Version=3.0.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.0.2\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
@@ -178,6 +182,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Services.Client" />
@@ -212,13 +217,15 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\WebActivatorEx.2.0.6\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
