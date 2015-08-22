@@ -54,6 +54,10 @@
       <HintPath>..\packages\Ab.SimpleInjector.0.1.2\lib\net45\Ab.SimpleInjector.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.2.13.2.0\lib\net40-client\CsvHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Azure.KeyVault.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.KeyVault.Core.1.0.0\lib\net40\Microsoft.Azure.KeyVault.Core.dll</HintPath>
       <Private>True</Private>
@@ -122,15 +126,20 @@
       <HintPath>..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ContainerConfig.cs" />
+    <Compile Include="Configuration\ContainerJobActivator.cs" />
+    <Compile Include="Data\CsvCategory.cs" />
+    <Compile Include="Data\CsvCategoryMap.cs" />
+    <Compile Include="Data\CsvCategoryPathTypeConverter.cs" />
+    <Compile Include="Data\CsvReaderFactory.cs" />
     <Compile Include="Functions.cs" />
-    <Compile Include="JobHostConfigurationFactory.cs" />
-    <Compile Include="JobHostFactory.cs" />
+    <Compile Include="Configuration\JobHostFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
