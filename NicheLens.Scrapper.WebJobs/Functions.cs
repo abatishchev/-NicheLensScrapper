@@ -8,6 +8,7 @@ using Ab.Amazon.Data;
 using Ab.Factory;
 
 using CsvHelper;
+using Elmah;
 
 using Microsoft.Azure.WebJobs;
 using NicheLens.Scrapper.Api.Client;
@@ -40,11 +41,13 @@ namespace NicheLens.Scrapper.WebJobs
 			var csvReader = _readerFactory.Create(textReader);
 			try
 			{
-				var records = csvReader.GetRecords<CsvCategory>().ToArray();
+				var categories = csvReader.GetRecords<CsvCategory>().ToArray();
 			}
-			catch (Exception ex)
+			catch (CsvHelperException ex)
 			{
-				Console.Error.WriteLine(ex.Data["CsvHelper"]);
+				ErrorLog errorLog = ErrorLog.GetDefault(null);
+				errorLog.ApplicationName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+				errorLog.Log(new Error(ex));
 			}
 		}
 

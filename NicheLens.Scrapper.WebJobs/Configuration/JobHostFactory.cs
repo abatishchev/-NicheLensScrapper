@@ -1,4 +1,5 @@
-﻿using Ab.Configuration;
+﻿using System;
+using Ab.Configuration;
 using Ab.Factory;
 
 using Microsoft.Azure.WebJobs;
@@ -24,7 +25,11 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 			{
 				DashboardConnectionString = connectionString,
 				StorageConnectionString = connectionString,
-				JobActivator = _activator
+				JobActivator = _activator,
+				Queues =
+				{
+					MaxPollingInterval = TimeSpan.FromMinutes(1)
+				}
 			};
 			return new JobHost(configuration);
 		}
