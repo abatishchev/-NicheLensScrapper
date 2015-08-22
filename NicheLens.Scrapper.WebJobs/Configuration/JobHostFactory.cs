@@ -1,6 +1,4 @@
-﻿using System;
-using Ab.Configuration;
-using Ab.Factory;
+﻿using Ab.Factory;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -9,26 +7,27 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 {
 	public sealed class JobHostFactory : IFactory<JobHost>
 	{
-		private readonly IConfigurationProvider _configurationProvider;
+		private readonly WebJobsOptions _options;
 		private readonly IJobActivator _activator;
 
-		public JobHostFactory(IConfigurationProvider configurationProvider, IJobActivator activator)
+		public JobHostFactory(WebJobsOptions options, IJobActivator activator)
 		{
-			_configurationProvider = configurationProvider;
+			_options = options;
 			_activator = activator;
 		}
 
 		public JobHost Create()
 		{
-			var connectionString = _configurationProvider.GetValue("azure:Blob");
 			var configuration = new JobHostConfiguration
 			{
-				DashboardConnectionString = connectionString,
-				StorageConnectionString = connectionString,
+				DashboardConnectionString = _options.ConnectionString,
+				StorageConnectionString = _options.ConnectionString,
 				JobActivator = _activator,
 				Queues =
 				{
-					MaxPollingInterval = TimeSpan.FromMinutes(1)
+					MaxPollingInterval = _options.MaxPollingInterval,
+					MaxDequeueCount = _options.MaxDequeueCount,
+					BatchSize = _options.BatchSize
 				}
 			};
 			return new JobHost(configuration);

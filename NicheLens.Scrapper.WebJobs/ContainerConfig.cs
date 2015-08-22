@@ -1,7 +1,12 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 using Ab.Configuration;
 using Ab.SimpleInjector;
+
+using CsvHelper;
+using Elmah;
+using Elmah.AzureTableStorage;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -25,14 +30,27 @@ namespace NicheLens.Scrapper.WebJobs
 
 		private static void RegisterTypes(Container container)
 		{
-			// Providers
+			// Configuration
 			container.RegisterSingleton<IConfigurationProvider, AppSettingsConfigurationProvider>();
+			container.RegisterFactory<WebJobsOptions, WebJobsOptionsFactory>(Lifestyle.Singleton);
 
 			// Web Jobs
 			container.Register<IJobActivator, ContainerJobActivator>(Lifestyle.Singleton);
 			container.RegisterFactory<JobHost, JobHostFactory>();
 
-			container.RegisterFactory<CsvHelper.ICsvReader, TextReader, Data.CsvReaderFactory>();
+			// CSV
+			container.RegisterSingleton<CsvFactory>();
+			container.RegisterFactory<ICsvReader, TextReader, Data.CsvReaderFactory>();
+
+			// Elmah
+			ServiceCenter.Current = c => container;
+			container.Register<ErrorLog>(() =>
+				new AzureTableStorageErrorLog(
+					new Dictionary<string, string>
+					{
+						{ "connectionString", container.GetInstance<WebJobsOptions>().ConnectionString },
+						{ "applicationName", "WebJobs" }
+					}));
 		}
 	}
 }
