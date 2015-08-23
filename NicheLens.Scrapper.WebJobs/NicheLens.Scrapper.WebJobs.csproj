@@ -145,6 +145,7 @@
     <Compile Include="Configuration\ContainerJobActivator.cs" />
     <Compile Include="Data\CsvCategory.cs" />
     <Compile Include="Data\CsvCategoryMap.cs" />
+    <Compile Include="Data\CsvCategoryParser.cs" />
     <Compile Include="Data\CsvCategoryPathTypeConverter.cs" />
     <Compile Include="Data\CsvReaderFactory.cs" />
     <Compile Include="Functions.cs" />
