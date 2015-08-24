@@ -2,7 +2,7 @@
 {
 	public class CsvCategory
 	{
-		public string Title { get; set; }
+		public string Name { get; set; }
 
 		public long ParentNodeId { get; set; }
 

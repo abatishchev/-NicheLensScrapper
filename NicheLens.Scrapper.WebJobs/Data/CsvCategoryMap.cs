@@ -10,10 +10,10 @@ namespace NicheLens.Scrapper.WebJobs.Data
 		public CsvCategoryMap()
 		{
 			AutoMap();
+			Map(c => c.Name).Name("Title");
 			Map(c => c.ParentNodeId).Name("ParentNodeID");
 			Map(c => c.NodeId).Name("NodeID");
 			Map(c => c.Catalog).ConvertUsing(ReadCatalog);
-			//Map(c => c.Path).TypeConverter<CsvCategoryPathTypeConverter>();
 			Map(c => c.Path).ConvertUsing(ReadPath);
 			Map(c => c.ShowInStore).TypeConverterOption(true, "Y")
 								   .TypeConverterOption(false, "N");

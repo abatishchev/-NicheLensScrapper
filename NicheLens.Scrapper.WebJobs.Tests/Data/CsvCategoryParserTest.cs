@@ -27,7 +27,7 @@ Brands|1036592|1294227011|Apparel|-unknown-|Apparel & Accessories &gt; Brands||Y
 
 			// Assert
 			var category = categories.Should().ContainSingle().Which;
-			category.Title.Should().Be("Brands");
+			category.Name.Should().Be("Brands");
 			category.ParentNodeId.Should().Be(1036592);
 			category.NodeId.Should().Be(1294227011);
 			category.SearchIndex.Should().Be("Apparel");
