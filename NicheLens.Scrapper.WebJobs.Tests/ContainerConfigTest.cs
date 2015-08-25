@@ -1,4 +1,7 @@
-﻿using SimpleInjector;
+﻿using System;
+using AutoMapper;
+using FluentAssertions;
+using SimpleInjector;
 using Xunit;
 
 namespace NicheLens.Scrapper.WebJobs.Tests
@@ -12,7 +15,36 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var container = ContainerConfig.CreateContainer();
 
 			// Act
-			container.Verify(VerificationOption.VerifyOnly);
+			Action action = () => container.Verify(VerificationOption.VerifyOnly);
+
+			// Arrange
+			action.ShouldNotThrow();
+		}
+
+		[Fact]
+		public void GetSIntance_Functions_Should_Not_Throw_Exception()
+		{
+			// Arrange
+			var container = ContainerConfig.CreateContainer();
+
+			// Act
+			var functions = container.GetInstance<Functions>();
+
+			// Arrange
+			functions.Should().NotBeNull();
+		}
+
+		[Fact]
+		public void Mapper_AssertConfigurationIsValid_Should_Not_Throw_Exception()
+		{
+			// Arrange
+			var container = ContainerConfig.CreateContainer();
+
+			// Act
+			Action action = Mapper.AssertConfigurationIsValid;
+
+			// Arrange
+			action.ShouldNotThrow();
 		}
 	}
 }
