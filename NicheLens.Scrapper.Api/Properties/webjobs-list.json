@@ -2,7 +2,7 @@
   "$schema": "http://schemastore.org/schemas/json/webjobs-list.json",
   "WebJobs": [
     {
-      "filePath": "../NicheLens.Scrapper.WebJobs.Host/NicheLens.Scrapper.WebJobs.Host.csproj"
+      "filePath": "../NicheLens.Scrapper.WebJobs/NicheLens.Scrapper.WebJobs.csproj"
     }
   ]
 }
