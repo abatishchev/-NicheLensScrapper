@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Xml.Linq;
+
 using Ab;
 using Ab.Amazon;
 using Ab.Amazon.Configuration;
@@ -21,17 +22,19 @@ using Ab.SimpleInjector;
 using Ab.Threading;
 using Ab.Validation;
 using Ab.Web;
+
 using AutoMapper;
 using AutoMapper.Mappers;
+
 using CsvHelper;
 
 using Elmah;
 using Elmah.AzureTableStorage;
 
-using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
+
 using NicheLens.Scrapper.WebJobs.Configuration;
 using NicheLens.Scrapper.WebJobs.Data;
 
@@ -58,10 +61,14 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.RegisterFactory<WebJobsOptions, WebJobsOptionsFactory>(Lifestyle.Singleton);
 
-			container.Register<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>();
-			container.Register<IOptionsProvider<AwsOptions>, AzureAwsOptionsProvider>();
+			container.Register<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>(Lifestyle.Singleton);
+			container.Register<IOptionsProvider<AwsOptions[]>, AzureAwsOptionsProvider>(Lifestyle.Singleton);
 			container.RegisterDecorator<IOptionsProvider<AwsOptions>, LazyOptionsProviderAdapter<AwsOptions>>(Lifestyle.Singleton);
 			container.RegisterFactory<AwsOptions, RoundrobinAwsOptionsFactory>(Lifestyle.Singleton);
+			#endregion
+
+			#region Providers
+			container.RegisterSingleton<IDateTimeProvider, UtcDateTimeProvider>();
 			#endregion
 
 			#region Web Jobs
@@ -134,6 +141,7 @@ namespace NicheLens.Scrapper.WebJobs
 						}
 					};
 			});
+			container.Register<IPartitionResolverProvider, PartitionResolverProvider>();
 			container.Register<IDocumentDbClient, DocumentDbClient>();
 
 			container.Register<IAzureClient, AzureClient>();

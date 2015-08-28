@@ -17,7 +17,7 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 		{
 			return new WebJobsOptions
 			{
-				ConnectionString = _configurationProvider.GetValue("azure:Blob"),
+				ConnectionString = _configurationProvider.GetValue("azure:Container:ConnectionString"),
 
 				BatchSize = Int32.Parse(_configurationProvider.GetValue("azure:Queue:BatchSize")),
 				MaxDequeueCount = Int32.Parse(_configurationProvider.GetValue("azure:Queue:MaxDequeueCount")),
