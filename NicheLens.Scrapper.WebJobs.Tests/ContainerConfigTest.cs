@@ -1,7 +1,5 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentAssertions;
-using SimpleInjector;
 using Xunit;
 
 namespace NicheLens.Scrapper.WebJobs.Tests
@@ -15,10 +13,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var container = ContainerConfig.CreateContainer();
 
 			// Act
-			Action action = () => container.Verify(VerificationOption.VerifyOnly);
-
-			// Arrange
-			action.ShouldNotThrow();
+			container.Verify();
 		}
 
 		[Fact]
@@ -41,10 +36,8 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var container = ContainerConfig.CreateContainer();
 
 			// Act
-			Action action = Mapper.AssertConfigurationIsValid;
-
 			// Arrange
-			action.ShouldNotThrow();
+			Mapper.AssertConfigurationIsValid();
 		}
 	}
 }
