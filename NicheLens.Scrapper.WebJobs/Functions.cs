@@ -4,13 +4,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Ab;
+using Ab.Amazon;
 using Ab.Amazon.Data;
-using Ab.Factory;
 
 using CsvHelper;
 using Elmah;
 
 using Microsoft.Azure.WebJobs;
+
 using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
@@ -18,36 +20,37 @@ namespace NicheLens.Scrapper.WebJobs
 {
 	public class Functions
 	{
-		private readonly IFactory<ICsvReader, TextReader> _readerFactory;
+		private readonly IAzureCategoryProvider _categoryProvider;
+		private readonly CsvCategoryParser _categoryParser;
+		private readonly IConverter<CsvCategory, Category> _categoryConverter;
 
-		public Functions(IFactory<ICsvReader, TextReader> readerFactory)
+		public Functions(IAzureCategoryProvider categoryProvider, CsvCategoryParser categoryParser, IConverter<CsvCategory, Category> categoryConverter)
 		{
-			_readerFactory = readerFactory;
+			_categoryProvider = categoryProvider;
+			_categoryParser = categoryParser;
+			_categoryConverter = categoryConverter;
 		}
 
 		[NoAutomaticTrigger]
-		public static Task StartScrapperAsync(CancellationToken token)
+		public Task StartScrapperAsync(CancellationToken token)
 		{
 			var scrapperClient = new ScrapperApi();
 			return scrapperClient.Scrapper.GetWithOperationResponseAsync(token);
 		}
 
-		public void ProcessCategoryCsv([BlobTrigger("categories-csv/{name}")] TextReader textReader,
-									   string name,
-									   CancellationToken token)
+		public void ParseCategoriesFromCsv([BlobTrigger("categories-csv")] TextReader textReader,
+										   CancellationToken token)
 		{
-			name = Uri.UnescapeDataString(name);
-
-			var csvReader = _readerFactory.Create(textReader);
 			try
 			{
-				var categories = csvReader.GetRecords<CsvCategory>().ToArray();
+				var categories = _categoryParser.Parse(textReader)
+												.Select(_categoryConverter.Convert)
+												.ToArray();
+				_categoryProvider.SaveCategories(categories);
 			}
 			catch (CsvHelperException ex)
 			{
-				ErrorLog errorLog = ErrorLog.GetDefault(null);
-				errorLog.ApplicationName = System.Reflection.MethodBase.GetCurrentMethod().Name;
-				errorLog.Log(new Error(ex));
+				ErrorLog.GetDefault(null).Log(new Error(ex));
 			}
 		}
 

@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Ab.Amazon.Data;
+
+using AutoMapper;
 using FluentAssertions;
 
 using NicheLens.Scrapper.WebJobs.Data;
@@ -22,7 +24,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests.Data
 			var csvCategy = new Fixture().Create<CsvCategory>();
 
 			// Act
-			var category = converter.Convert(csvCategy);
+			Category category = converter.Convert(csvCategy);
 
 			// Assert
 			category.Name.Should().Be(csvCategy.Name);

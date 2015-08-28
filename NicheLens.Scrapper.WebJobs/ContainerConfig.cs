@@ -1,15 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Reactive.Concurrency;
+using System.Xml.Linq;
 
 using Ab;
 using Ab.Amazon;
+using Ab.Amazon.Configuration;
+using Ab.Amazon.Cryptography;
 using Ab.Amazon.Data;
+using Ab.Amazon.Filtering;
+using Ab.Amazon.Pipeline;
+using Ab.Amazon.Validation;
+using Ab.Amazon.Web;
 using Ab.Azure;
+using Ab.Azure.Configuration;
 using Ab.Configuration;
+using Ab.Filtering;
+using Ab.Pipeline;
 using Ab.SimpleInjector;
+using Ab.Threading;
+using Ab.Validation;
+using Ab.Web;
 
 using AutoMapper;
 using AutoMapper.Mappers;
+
 using CsvHelper;
 
 using Elmah;
@@ -17,6 +33,7 @@ using Elmah.AzureTableStorage;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage.Table;
 
 using NicheLens.Scrapper.WebJobs.Configuration;
 using NicheLens.Scrapper.WebJobs.Data;
@@ -41,7 +58,17 @@ namespace NicheLens.Scrapper.WebJobs
 		{
 			#region Configuration
 			container.RegisterSingleton<Ab.Configuration.IConfigurationProvider, AppSettingsConfigurationProvider>();
+
 			container.RegisterFactory<WebJobsOptions, WebJobsOptionsFactory>(Lifestyle.Singleton);
+
+			container.Register<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>(Lifestyle.Singleton);
+			container.Register<IOptionsProvider<AwsOptions[]>, AzureAwsOptionsProvider>(Lifestyle.Singleton);
+			container.RegisterDecorator<IOptionsProvider<AwsOptions>, LazyOptionsProviderAdapter<AwsOptions>>(Lifestyle.Singleton);
+			container.RegisterFactory<AwsOptions, RoundrobinAwsOptionsFactory>(Lifestyle.Singleton);
+			#endregion
+
+			#region Providers
+			container.RegisterSingleton<IDateTimeProvider, UtcDateTimeProvider>();
 			#endregion
 
 			#region Web Jobs
@@ -78,20 +105,80 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 
 			#region Azure
+			container.RegisterFactory<AzureOptions, AzureOptionsFactory>(Lifestyle.Singleton);
+
 			container.Register<IAzureContainerClient, AzureContainerClient>();
 
 			container.Register<IBlobClient, AzureBlobClient>();
 			container.Register<ITableClient, AzureTableClient>();
 			container.Register<IQueueClient, AzureQueueClient>();
+
+			container.Register<IStringBuilder<string>, DatabaseLinkBuilder>(Lifestyle.Singleton);
+			container.Register<IStringBuilder<string, string>, CollectionLinkBuilder>(Lifestyle.Singleton);
+			container.Register<IStringBuilder<string, string, string>, DocumentLinkBuilder>(Lifestyle.Singleton);
+
+			container.RegisterFactory<DocumentDbOptions, DocumentDbOptionsFactory>(Lifestyle.Singleton);
+			container.RegisterInitializer((DocumentDbOptions opt) =>
+			{
+				opt.DatabaseOptions = new Dictionary<string, DatabaseOptions>
+					{
+						{
+							"Scrapper",
+							new DatabaseOptions(container.GetInstance<IStringBuilder<string>>())
+							{
+								DatabaseId = "88AvAA==",
+								CollectionOptions = new Dictionary<string, CollectionOptions>
+								{
+									{
+										"Categories",
+										new CollectionOptions("88AvAA==", container.GetInstance<IStringBuilder<string, string>>())
+										{
+											CollectionId = "88AvAL3WZgA="
+										}
+									}
+								}
+							}
+						}
+					};
+			});
+			container.Register<IPartitionResolverProvider, PartitionResolverProvider>();
 			container.Register<IDocumentDbClient, DocumentDbClient>();
 
 			container.Register<IAzureClient, AzureClient>();
 
 			container.Register<IConverter<string, Product>, JsonProductConverter>();
 			container.Register<IConverter<Category, string>, JsonCategoryConverter>();
-
+			container.Register<IConverter<Category, CategoryDocument>, MappingCategoryDocumentConverter>();
 			container.Register<IAzureProductProvider, AzureProductProvider>();
+
 			container.Register<IAzureCategoryProvider, AzureCategoryProvider>();
+			#endregion
+
+			#region Amazon
+			container.Register<IArgumentBuilder, AwsArgumentBuilder>();
+			container.Register<IPipeline<string>, PercentUrlEncodingPipeline>();
+			container.Register<IUrlEncoder, PercentUrlEncoder>();
+			container.Register<IQueryBuilder, EncodedQueryBuilder>();
+			container.RegisterFactory<System.Security.Cryptography.HashAlgorithm, AwsAlgorithmFactory>();
+			container.Register<IQuerySigner, AwsQuerySigner>();
+			container.Register<IUrlBuilder, AwsUrlBuilder>();
+
+			container.RegisterSingleton<IScheduler>(Scheduler.Default);
+			container.Register<IRequestScheduler, IntervalRequestScheduler>();
+
+			container.Register<HttpClient>(() => HttpClientFactory.Create());
+			container.Register<IHttpClient, HttpClientAdapter>();
+			container.RegisterDecorator<IHttpClient, ThrottlingHttpClient>();
+
+			container.Register<IValidator<XElement>, XmlRequestValidator>();
+			container.Register<IItemSelector, XmlItemSelector>();
+			container.Register<IPipeline<Product, XElement, SearchCriteria>, ResponseGroupProductPipeline>();
+			container.RegisterFactory<Product, XElement, SearchCriteria, XmlProductFactory>();
+			container.Register<IFilter<XElement>, PrimaryVariantlItemFilter>();
+
+			container.Register<IAwsClient, XmlAwsClient>();
+
+			container.Register<IAwsProductProvider, AwsProductProvider>();
 			#endregion
 		}
 
@@ -104,6 +191,7 @@ namespace NicheLens.Scrapper.WebJobs
 				configuration.ConstructServicesUsing(container.GetInstance);
 
 				configuration.AddProfile<CsvCategoryMappingProfile>();
+				configuration.AddProfile<CategoryDocumentMappingProfile>();
 			});
 		}
 	}
