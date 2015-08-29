@@ -140,7 +140,7 @@ namespace NicheLens.Scrapper.WebJobs
 						}
 					};
 			});
-			container.Register<IPartitionResolverProvider, PartitionResolverProvider>();
+			container.Register<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
 			container.Register<IDocumentDbClient, DocumentDbClient>();
 
 			container.Register<IAzureClient, AzureClient>();

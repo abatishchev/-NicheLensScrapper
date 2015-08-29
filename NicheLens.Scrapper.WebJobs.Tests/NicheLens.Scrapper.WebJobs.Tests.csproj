@@ -46,11 +46,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Amazon.Azure">
-      <HintPath>..\packages\Ab.Amazon.Azure.0.1.5\lib\net45\Ab.Amazon.Azure.dll</HintPath>
+      <HintPath>..\packages\Ab.Amazon.Azure.0.1.7\lib\net45\Ab.Amazon.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Azure">
-      <HintPath>..\packages\Ab.Azure.0.1.8\lib\net45\Ab.Azure.dll</HintPath>
+      <HintPath>..\packages\Ab.Azure.0.1.12\lib\net45\Ab.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
