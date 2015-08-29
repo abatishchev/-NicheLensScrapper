@@ -17,8 +17,8 @@ namespace NicheLens.Scrapper.WebJobs.Tests.Data
 		{
 			// Assert
 			const string csv = @"
-Title|ParentNodeID|NodeID|SearchIndex|Catalog|Path|Description|ShowInStore
-Brands|1036592|1294227011|Apparel|-unknown-|Apparel & Accessories &gt; Brands||Y";
+Title,ParentNodeID,NodeID,SearchIndex,Catalog,Path,Description,ShowInStore
+Brands,1036592,1294227011,Apparel,-unknown-,Apparel & Accessories &gt; Brands,,Y";
 
 			var parser = new CsvCategoryParser(new CsvReaderFactory(new CsvFactory()));
 
@@ -27,7 +27,7 @@ Brands|1036592|1294227011|Apparel|-unknown-|Apparel & Accessories &gt; Brands||Y
 
 			// Assert
 			var category = categories.Should().ContainSingle().Which;
-			category.Name.Should().Be("Brands");
+			category.Title.Should().Be("Brands");
 			category.ParentNodeId.Should().Be(1036592);
 			category.NodeId.Should().Be(1294227011);
 			category.SearchIndex.Should().Be("Apparel");

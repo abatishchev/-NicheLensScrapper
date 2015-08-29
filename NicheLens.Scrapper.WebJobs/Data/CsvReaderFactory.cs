@@ -1,5 +1,5 @@
 ﻿using System.IO;
-
+using System.Text;
 using Ab.Factory;
 
 using CsvHelper;
@@ -20,7 +20,7 @@ namespace NicheLens.Scrapper.WebJobs.Data
 		{
 			var configuration = new CsvConfiguration
 			{
-				Delimiter = "|"
+				Encoding = Encoding.UTF8
 			};
 			var csvReader = _factory.CreateReader(textReader, configuration);
 			csvReader.Configuration.RegisterClassMap<CsvCategoryMap>();

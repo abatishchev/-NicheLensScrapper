@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ using Elmah;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Blob;
+
 using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
@@ -32,7 +32,7 @@ namespace NicheLens.Scrapper.WebJobs
 		}
 
 		[NoAutomaticTrigger]
-		public Task StartScrapperAsync(CancellationToken token)
+		public Task StartScrapper(CancellationToken token)
 		{
 			var scrapperClient = new ScrapperApi();
 			return scrapperClient.Scrapper.GetWithOperationResponseAsync(token);
@@ -56,15 +56,18 @@ namespace NicheLens.Scrapper.WebJobs
 			catch (CsvHelperException ex)
 			{
 				ErrorLog.GetDefault(null).Log(new Error(ex));
+				throw;
 			}
 		}
 
-		public Task ProcessCategoryQueueAsync([QueueTrigger("categories")] Category category,
-											  CancellationToken token)
+		/*
+		public Task ProcessCategoryQueue([QueueTrigger("categories")] Category category,
+		                                 CancellationToken token)
 		{
 			Console.WriteLine(category.Name);
 
 			return Task.CompletedTask;
 		}
+		*/
 	}
 }

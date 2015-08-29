@@ -27,7 +27,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests.Data
 			Category category = converter.Convert(csvCategy);
 
 			// Assert
-			category.Name.Should().Be(csvCategy.Name);
+			category.Name.Should().Be(csvCategy.Title);
 			category.NodeId.Should().Be(csvCategy.NodeId);
 			category.ParentNodeId.Should().Be(csvCategy.ParentNodeId);
 			category.SearchIndex.Should().Be(csvCategy.SearchIndex);
