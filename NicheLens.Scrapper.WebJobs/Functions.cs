@@ -12,7 +12,7 @@ using CsvHelper;
 using Elmah;
 
 using Microsoft.Azure.WebJobs;
-
+using Microsoft.WindowsAzure.Storage.Blob;
 using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
@@ -38,15 +38,20 @@ namespace NicheLens.Scrapper.WebJobs
 			return scrapperClient.Scrapper.GetWithOperationResponseAsync(token);
 		}
 
-		public void ParseCategoriesFromCsv([BlobTrigger("categories-csv")] TextReader textReader,
-										   CancellationToken token)
+		public async Task ParseCategoriesFromCsv([BlobTrigger("categories-csv")] ICloudBlob blob,
+												 CancellationToken token)
 		{
 			try
 			{
+				var stream = await blob.OpenReadAsync(token);
+				var textReader = new StreamReader(stream);
+
 				var categories = _categoryParser.Parse(textReader)
 												.Select(_categoryConverter.Convert)
 												.ToArray();
-				_categoryProvider.SaveCategories(categories);
+				await _categoryProvider.SaveCategories(categories);
+
+				await blob.DeleteAsync(token);
 			}
 			catch (CsvHelperException ex)
 			{
@@ -59,7 +64,7 @@ namespace NicheLens.Scrapper.WebJobs
 		{
 			Console.WriteLine(category.Name);
 
-			return Task.Delay(0, token);
+			return Task.CompletedTask;
 		}
 	}
 }

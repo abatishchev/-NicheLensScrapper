@@ -124,17 +124,16 @@ namespace NicheLens.Scrapper.WebJobs
 					{
 						{
 							"Scrapper",
-							new DatabaseOptions(container.GetInstance<IStringBuilder<string>>())
+							new DatabaseOptions(container.GetInstance<IStringBuilder<string, string>>())
 							{
 								DatabaseId = "88AvAA==",
-								CollectionOptions = new Dictionary<string, CollectionOptions>
+								CollectionOptions =
 								{
+									new CollectionOptions
 									{
-										"Categories",
-										new CollectionOptions("88AvAA==", container.GetInstance<IStringBuilder<string, string>>())
-										{
-											CollectionId = "88AvAL3WZgA="
-										}
+										CollectionName =  "Categories",
+										CollectionId = "88AvAL3WZgA=",
+										RequestUnits = 250
 									}
 								}
 							}
@@ -163,8 +162,9 @@ namespace NicheLens.Scrapper.WebJobs
 			container.Register<IQuerySigner, AwsQuerySigner>();
 			container.Register<IUrlBuilder, AwsUrlBuilder>();
 
+			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, IntervalTaskSchedulerFactory>(Lifestyle.Singleton);
 			container.RegisterSingleton<IScheduler>(Scheduler.Default);
-			container.Register<IRequestScheduler, IntervalRequestScheduler>();
+			container.Register<ITaskScheduler, IntervalTaskScheduler>();
 
 			container.Register<HttpClient>(() => HttpClientFactory.Create());
 			container.Register<IHttpClient, HttpClientAdapter>();
