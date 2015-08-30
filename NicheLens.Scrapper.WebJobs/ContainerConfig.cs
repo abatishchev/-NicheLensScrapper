@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Xml.Linq;
@@ -34,7 +35,7 @@ using Elmah.AzureTableStorage;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
-
+using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Configuration;
 using NicheLens.Scrapper.WebJobs.Data;
 
@@ -74,6 +75,10 @@ namespace NicheLens.Scrapper.WebJobs
 			#region Web Jobs
 			container.Register<IJobActivator, ContainerJobActivator>(Lifestyle.Singleton);
 			container.RegisterFactory<JobHost, JobHostFactory>();
+			#endregion
+
+			#region Scrapper Api
+			container.Register<IScrapperApi>(() => new ScrapperApi(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }));
 			#endregion
 
 			#region CSV
