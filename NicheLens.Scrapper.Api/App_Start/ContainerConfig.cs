@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -7,19 +8,16 @@ using System.Web.Http.Filters;
 using System.Web.Http.Validation;
 
 using Ab;
-using Ab.Amazon.Configuration;
-using Ab.Azure;
-using Ab.Azure.Configuration;
 using Ab.Configuration;
-using Ab.SimpleInjector;
 using Ab.WebApi.AppInsights;
+
+using Elmah;
+using Elmah.AzureTableStorage;
 
 using FluentValidation.Attributes;
 using FluentValidation.WebApi;
 
 using Microsoft.ApplicationInsights;
-using Microsoft.WindowsAzure.Storage.Table;
-
 using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
 
@@ -69,6 +67,17 @@ namespace NicheLens.Scrapper.Api
 
 			// Controllers
 			container.RegisterWebApiControllers(GlobalConfiguration.Configuration, Assembly.GetExecutingAssembly());
+			#endregion
+
+			#region  Elmah
+			ServiceCenter.Current = c => container;
+			container.Register<ErrorLog>(() =>
+				new AzureTableStorageErrorLog(
+					new Dictionary<string, string>
+					{
+						{ "connectionString", container.GetInstance<IConfigurationProvider>().GetValue("azure:Container:ConnectionString") },
+						{ "applicationName", "WebJobs" }
+					}));
 			#endregion
 
 			#region AppInsights
