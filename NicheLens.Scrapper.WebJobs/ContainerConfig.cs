@@ -85,6 +85,7 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterSingleton<CsvFactory>();
 			container.RegisterFactory<ICsvReader, TextReader, CsvReaderFactory>();
 			container.Register<IConverter<CsvCategory, Category>, MappingCsvCategoryConverter>();
+			container.Register<IFilter<Category>, EmptySearchIndexCategoryFIlter>();
 			#endregion
 
 			#region  Elmah

@@ -162,6 +162,7 @@
     <Compile Include="Data\CsvCategoryMappingProfile.cs" />
     <Compile Include="Data\CsvCategoryParser.cs" />
     <Compile Include="Data\CsvReaderFactory.cs" />
+    <Compile Include="Data\EmptySearchIndexCategoryFIlter.cs" />
     <Compile Include="Data\MappingCsvCategoryConverter.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="Program.cs" />

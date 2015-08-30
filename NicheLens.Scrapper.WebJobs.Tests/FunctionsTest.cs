@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,16 +9,19 @@ using Ab;
 using Ab.Amazon;
 using Ab.Amazon.Data;
 using Ab.Factory;
+using Ab.Filtering;
 
 using CsvHelper;
 using Elmah;
 using FluentAssertions;
 
 using Microsoft.Azure.Documents;
+using Microsoft.Rest;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 using Moq;
 
+using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
 using Ploeh.AutoFixture;
@@ -28,7 +32,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 	public class FunctionsTest
 	{
 		[Fact]
-		public async Task ParseCategoriesFromCsv_Should_ParseCsv_And_Save_Categories_And_Delete_Blob()
+		public async Task ParseCategoriesFromCsv_Should_Parse_Csv_And_Save_Categories_And_Delete_Blob()
 		{
 			// Assert
 			var fixture = new Fixture();
@@ -63,7 +67,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var functions = CreateFunctions(provider.Object, factory.Object, converter.Object);
 
 			// Act
-			await functions.ParseCategoriesFromCsv(blob.Object, CancellationToken.None);
+			await functions.ParseCategoriesFromCsv(blob.Object, TextWriter.Null, CancellationToken.None);
 
 			// Assert
 			provider.VerifyAll();
@@ -76,7 +80,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 		{
 			// Assert
 			var csvReader = new Mock<ICsvReader>();
-			csvReader.Setup(r => r.GetRecords<CsvCategory>()).Throws<CsvHelperException>();
+			csvReader.Setup(r => r.GetRecords<CsvCategory>()).Throws<Exception>();
 
 			var factory = new Mock<IFactory<ICsvReader, TextReader>>();
 			factory.Setup(f => f.Create(It.IsAny<TextReader>())).Returns(csvReader.Object);
@@ -84,7 +88,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var functions = CreateFunctions(factory: factory.Object);
 
 			// Act
-			await functions.ParseCategoriesFromCsv(Mock.Of<ICloudBlob>(), CancellationToken.None);
+			await functions.ParseCategoriesFromCsv(Mock.Of<ICloudBlob>(), TextWriter.Null, CancellationToken.None);
 
 			// Assert
 			ErrorLog.GetDefault(null).GetErrors(0, 1, new List<object>()).Should().BeGreaterThan(0);
@@ -95,9 +99,22 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 												 IConverter<CsvCategory, Category> converter = null)
 		{
 			return new Functions(
+				CreateApiClient(),
 				provider ?? Mock.Of<IAzureCategoryProvider>(),
 				new CsvCategoryParser(factory),
-				converter ?? CreateConverter());
+				converter ?? CreateConverter(),
+				new FilterAdapter<Category>(true));
+		}
+
+		private static IScrapperApi CreateApiClient()
+		{
+			var operations = new Mock<IScrapperOperations>();
+			operations.Setup(o => o.GetWithOperationResponseAsync(CancellationToken.None)).ReturnsAsync(new HttpOperationResponse<string>());
+
+			var client = new Mock<IScrapperApi>();
+			client.SetupGet(c => c.Scrapper).Returns(operations.Object);
+
+			return client.Object;
 		}
 
 		private static IConverter<CsvCategory, Category> CreateConverter()

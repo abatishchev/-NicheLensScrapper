@@ -12,16 +12,16 @@ namespace NicheLens.Scrapper.WebJobs.Data
 			AutoMap();
 			Map(c => c.ParentNodeId).Name("ParentNodeID");
 			Map(c => c.NodeId).Name("NodeID");
-			Map(c => c.Catalog).ConvertUsing(ReadCatalog);
+			Map(c => c.SearchIndex).ConvertUsing(r => FilterUnknown(r.GetField<string>("SearchIndex")));
+			Map(c => c.Catalog).ConvertUsing(r => FilterUnknown(r.GetField<string>("Catalog")));
 			Map(c => c.Path).ConvertUsing(ReadPath);
 			Map(c => c.ShowInStore).TypeConverterOption(true, "Y")
 								   .TypeConverterOption(false, "N");
 		}
 
-		private static string ReadCatalog(ICsvReaderRow row)
+		private static string FilterUnknown(string value)
 		{
-			var catalog = row.GetField<string>("Catalog");
-			return !String.Equals(catalog, "-unknown-", StringComparison.OrdinalIgnoreCase) ? catalog : String.Empty;
+			return !String.Equals(value, "-unknown-", StringComparison.OrdinalIgnoreCase) ? value : String.Empty;
 		}
 
 		private static string ReadPath(ICsvReaderRow row)
