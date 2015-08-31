@@ -33,6 +33,13 @@ namespace NicheLens.Scrapper.Api.Client
             set { this._credentials = value; }
         }
         
+        private IParser _parser;
+        
+        public virtual IParser Parser
+        {
+            get { return this._parser; }
+        }
+        
         private IScrapperOperations _scrapper;
         
         public virtual IScrapperOperations Scrapper
@@ -46,6 +53,7 @@ namespace NicheLens.Scrapper.Api.Client
         public ScrapperApi()
             : base()
         {
+            this._parser = new Parser(this);
             this._scrapper = new ScrapperOperations(this);
             this._baseUri = new Uri("https://microsoft-apiapp9b2b9b0667ef43058cfe467f6b8d6828.azurewebsites.net");
         }
@@ -60,6 +68,7 @@ namespace NicheLens.Scrapper.Api.Client
         public ScrapperApi(params DelegatingHandler[] handlers)
             : base(handlers)
         {
+            this._parser = new Parser(this);
             this._scrapper = new ScrapperOperations(this);
             this._baseUri = new Uri("https://microsoft-apiapp9b2b9b0667ef43058cfe467f6b8d6828.azurewebsites.net");
         }
@@ -77,6 +86,7 @@ namespace NicheLens.Scrapper.Api.Client
         public ScrapperApi(HttpClientHandler rootHandler, params DelegatingHandler[] handlers)
             : base(rootHandler, handlers)
         {
+            this._parser = new Parser(this);
             this._scrapper = new ScrapperOperations(this);
             this._baseUri = new Uri("https://microsoft-apiapp9b2b9b0667ef43058cfe467f6b8d6828.azurewebsites.net");
         }

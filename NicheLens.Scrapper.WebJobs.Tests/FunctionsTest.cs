@@ -44,6 +44,11 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 									.ToArray();
 			var e = categories.AsEnumerable().GetEnumerator();
 
+			var operations = new Mock<IParser>();
+			operations.Setup(o => o.PostWithOperationResponseAsync(It.IsAny<string[]>(), CancellationToken.None)).ReturnsAsync(new HttpOperationResponse<string>());
+			var client = new Mock<IScrapperApi>();
+			client.SetupGet(c => c.Parser).Returns(operations.Object);
+
 			var provider = new Mock<IAzureCategoryProvider>();
 			provider.Setup(p => p.SaveCategories(categories)).Returns(Task.FromResult(new Document[0]));
 
@@ -64,12 +69,13 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			blob.Setup(b => b.OpenReadAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new MemoryStream());
 			blob.Setup(b => b.DeleteAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-			var functions = CreateFunctions(provider.Object, factory.Object, converter.Object);
+			var functions = CreateFunctions(client.Object, provider.Object, factory.Object, converter.Object);
 
 			// Act
 			await functions.ParseCategoriesFromCsv(blob.Object, TextWriter.Null, CancellationToken.None);
 
 			// Assert
+			client.VerifyAll();
 			provider.VerifyAll();
 			factory.VerifyAll();
 			converter.VerifyAll();
@@ -94,27 +100,17 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			ErrorLog.GetDefault(null).GetErrors(0, 1, new List<object>()).Should().BeGreaterThan(0);
 		}
 
-		private static Functions CreateFunctions(IAzureCategoryProvider provider = null,
+		private static Functions CreateFunctions(IScrapperApi apiClient = null,
+												 IAzureCategoryProvider provider = null,
 												 IFactory<ICsvReader, TextReader> factory = null,
 												 IConverter<CsvCategory, Category> converter = null)
 		{
 			return new Functions(
-				CreateApiClient(),
+				apiClient ?? Mock.Of<IScrapperApi>(),
 				provider ?? Mock.Of<IAzureCategoryProvider>(),
 				new CsvCategoryParser(factory),
 				converter ?? CreateConverter(),
 				new FilterAdapter<Category>(true));
-		}
-
-		private static IScrapperApi CreateApiClient()
-		{
-			var operations = new Mock<IScrapperOperations>();
-			operations.Setup(o => o.GetWithOperationResponseAsync(CancellationToken.None)).ReturnsAsync(new HttpOperationResponse<string>());
-
-			var client = new Mock<IScrapperApi>();
-			client.SetupGet(c => c.Scrapper).Returns(operations.Object);
-
-			return client.Object;
 		}
 
 		private static IConverter<CsvCategory, Category> CreateConverter()

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+
 using Ab;
 using Ab.Amazon;
 using Ab.Amazon.Data;
 using Ab.Filtering;
-using CsvHelper;
+
 using Elmah;
 
 using Microsoft.Azure.WebJobs;
@@ -49,7 +50,7 @@ namespace NicheLens.Scrapper.WebJobs
 
 		public async Task ParseCategoriesFromCsv([BlobTrigger("categories-csv")] ICloudBlob blob,
 												 TextWriter log,
-												 CancellationToken token)
+												 CancellationToken cancellationToken)
 		{
 			var blobName = HttpUtility.HtmlDecode(blob.Name);
 
@@ -57,19 +58,24 @@ namespace NicheLens.Scrapper.WebJobs
 
 			try
 			{
-				var stream = await blob.OpenReadAsync(token);
+				var stream = await blob.OpenReadAsync(cancellationToken);
 				var textReader = new StreamReader(stream);
 
 				var categories = _categoryParser.Parse(textReader)
 												.Select(_categoryConverter.Convert)
 												.Where(_categoryFilter.Filter)
 												.ToArray();
-				await _categoryProvider.SaveCategories(categories);
-				log.WriteLine("Parsed and saved {0} categories", categories.Length);
+				log.WriteLine("Parsed {0} categories", categories.Length);
 
-				await blob.DeleteAsync(token);
+				await _categoryProvider.SaveCategories(categories);
+				log.WriteLine("Saved {0} categories", categories.Length);
+
+				await blob.DeleteAsync(cancellationToken);
 				log.WriteLine("Blob {0} deleted", blobName);
 
+				var indecies = categories.Select(g => g.SearchIndex).Distinct().ToArray();
+				await _scrapperApi.Parser.PostWithOperationResponseAsync(indecies, cancellationToken);
+				log.WriteLine("Notified about {0} indecies", String.Join(",", indecies));
 			}
 			catch (Exception ex)
 			{
@@ -83,7 +89,7 @@ namespace NicheLens.Scrapper.WebJobs
 
 		/*
 		public Task ProcessCategoryQueue([QueueTrigger("categories")] Category category,
-		                                 CancellationToken token)
+		                                 CancellationToken cancellationToken)
 		{
 			Console.WriteLine(category.Name);
 

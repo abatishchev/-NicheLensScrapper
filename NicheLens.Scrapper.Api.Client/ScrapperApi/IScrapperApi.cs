@@ -26,6 +26,11 @@ namespace NicheLens.Scrapper.Api.Client
             get; set; 
         }
         
+        IParser Parser
+        {
+            get; 
+        }
+        
         IScrapperOperations Scrapper
         {
             get; 

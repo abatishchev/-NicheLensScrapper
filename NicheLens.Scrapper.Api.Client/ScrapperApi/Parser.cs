@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Rest;
@@ -14,15 +16,15 @@ using NicheLens.Scrapper.Api.Client;
 
 namespace NicheLens.Scrapper.Api.Client
 {
-    internal partial class ScrapperOperations : IServiceOperations<ScrapperApi>, IScrapperOperations
+    internal partial class Parser : IServiceOperations<ScrapperApi>, IParser
     {
         /// <summary>
-        /// Initializes a new instance of the ScrapperOperations class.
+        /// Initializes a new instance of the Parser class.
         /// </summary>
         /// <param name='client'>
         /// Reference to the service client.
         /// </param>
-        internal ScrapperOperations(ScrapperApi client)
+        internal Parser(ScrapperApi client)
         {
             this._client = client;
         }
@@ -37,11 +39,20 @@ namespace NicheLens.Scrapper.Api.Client
             get { return this._client; }
         }
         
+        /// <param name='indecies'>
+        /// Required.
+        /// </param>
         /// <param name='cancellationToken'>
         /// Cancellation token.
         /// </param>
-        public async Task<HttpOperationResponse<string>> GetWithOperationResponseAsync(CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public async Task<HttpOperationResponse<string>> PostWithOperationResponseAsync(IList<string> indecies, CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            // Validate
+            if (indecies is ILazyCollection<string> && ((ILazyCollection<string>)indecies).IsInitialized == false || indecies == null)
+            {
+                throw new ArgumentNullException("indecies");
+            }
+            
             // Tracing
             bool shouldTrace = ServiceClientTracing.IsEnabled;
             string invocationId = null;
@@ -49,12 +60,13 @@ namespace NicheLens.Scrapper.Api.Client
             {
                 invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                ServiceClientTracing.Enter(invocationId, this, "GetAsync", tracingParameters);
+                tracingParameters.Add("indecies", indecies);
+                ServiceClientTracing.Enter(invocationId, this, "PostAsync", tracingParameters);
             }
             
             // Construct URL
             string url = "";
-            url = url + "/api/scrapper/start";
+            url = url + "/api/parser/complete";
             string baseUrl = this.Client.BaseUri.AbsoluteUri;
             // Trim '/' character from the end of baseUrl and beginning of url.
             if (baseUrl[baseUrl.Length - 1] == '/')
@@ -70,8 +82,10 @@ namespace NicheLens.Scrapper.Api.Client
             
             // Create HTTP transport objects
             HttpRequestMessage httpRequest = new HttpRequestMessage();
-            httpRequest.Method = HttpMethod.Get;
+            httpRequest.Method = HttpMethod.Post;
             httpRequest.RequestUri = new Uri(url);
+            
+            // Set Headers
             
             // Set Credentials
             if (this.Client.Credentials != null)
@@ -79,6 +93,13 @@ namespace NicheLens.Scrapper.Api.Client
                 cancellationToken.ThrowIfCancellationRequested();
                 await this.Client.Credentials.ProcessHttpRequestAsync(httpRequest, cancellationToken).ConfigureAwait(false);
             }
+            
+            // Serialize Request
+            string requestContent = null;
+            JToken requestDoc = StringCollection.SerializeJson(indecies, null);
+            requestContent = requestDoc.ToString(Newtonsoft.Json.Formatting.Indented);
+            httpRequest.Content = new StringContent(requestContent, Encoding.UTF8);
+            httpRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
             
             // Send Request
             if (shouldTrace)
