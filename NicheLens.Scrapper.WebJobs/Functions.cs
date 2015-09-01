@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -41,13 +42,6 @@ namespace NicheLens.Scrapper.WebJobs
 			_categoryParser = categoryParser;
 			_categoryConverter = categoryConverter;
 			_categoryFilter = categoryFilter;
-		}
-
-		[NoAutomaticTrigger]
-		public Task StartScrapper(CancellationToken token)
-		{
-			var scrapperClient = new ScrapperApi();
-			return scrapperClient.Scrapper.GetWithOperationResponseAsync(token);
 		}
 
 		public async Task ParseCategoriesFromCsv([BlobTrigger("categories-csv")] ICloudBlob blob,
@@ -97,14 +91,20 @@ namespace NicheLens.Scrapper.WebJobs
 			log.WriteLine("Finished parsing {0}", blobName);
 		}
 
-		/*
-		public Task ProcessCategoryQueue([QueueTrigger("categories")] Category category,
-		                                 CancellationToken cancellationToken)
+		[NoAutomaticTrigger]
+		[Conditional("DEBUG")]
+		public void GetNumberOfParserQueues(TextWriter log)
 		{
-			Console.WriteLine(category.Name);
+			log.WriteLine("Number of parser queues is {0}", _numberOfParserQueues);
+		}
+
+		public Task ProcessCategoryQueue([QueueTrigger("categories")] Category category,
+										 TextWriter log,
+										 CancellationToken cancellationToken)
+		{
+			log.WriteLine("Starting scrapping {0} (id={1})", category.Name, category.NodeId);
 
 			return Task.CompletedTask;
 		}
-		*/
 	}
 }

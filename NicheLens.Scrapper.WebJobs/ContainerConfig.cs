@@ -35,6 +35,7 @@ using Elmah.AzureTableStorage;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
+
 using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Configuration;
 using NicheLens.Scrapper.WebJobs.Data;
@@ -110,6 +111,18 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterSingleton<IMappingEngine>(() => new MappingEngine(container.GetInstance<AutoMapper.IConfigurationProvider>()));
 			#endregion
 
+			#region Scheduler
+			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, IntervalTaskSchedulerFactory>(Lifestyle.Singleton);
+			container.RegisterSingleton<IScheduler>(Scheduler.Default);
+			container.Register<ITaskScheduler, IntervalTaskScheduler>();
+			#endregion
+
+			#region Http
+			container.Register<HttpClient>(() => HttpClientFactory.Create());
+			container.Register<IHttpClient, HttpClientAdapter>();
+			container.RegisterDecorator<IHttpClient, ThrottlingHttpClient>();
+			#endregion
+
 			#region Azure
 			container.RegisterFactory<AzureOptions, AzureOptionsFactory>(Lifestyle.Singleton);
 
@@ -147,7 +160,7 @@ namespace NicheLens.Scrapper.WebJobs
 					};
 			});
 			container.Register<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
-			container.Register<IDocumentDbClient, RetyDocumentDbClient>();
+			container.Register<IDocumentDbClient, RetryDocumentDbClient>();
 
 			container.Register<IAzureClient, AzureClient>();
 
@@ -167,14 +180,6 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterFactory<System.Security.Cryptography.HashAlgorithm, AwsAlgorithmFactory>();
 			container.Register<IQuerySigner, AwsQuerySigner>();
 			container.Register<IUrlBuilder, AwsUrlBuilder>();
-
-			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, IntervalTaskSchedulerFactory>(Lifestyle.Singleton);
-			container.RegisterSingleton<IScheduler>(Scheduler.Default);
-			container.Register<ITaskScheduler, IntervalTaskScheduler>();
-
-			container.Register<HttpClient>(() => HttpClientFactory.Create());
-			container.Register<IHttpClient, HttpClientAdapter>();
-			container.RegisterDecorator<IHttpClient, ThrottlingHttpClient>();
 
 			container.Register<IValidator<XElement>, XmlRequestValidator>();
 			container.Register<IItemSelector, XmlItemSelector>();

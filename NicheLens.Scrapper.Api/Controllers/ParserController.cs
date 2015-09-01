@@ -1,15 +1,28 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
+using System.Threading.Tasks;
 using System.Web.Http;
+
+using Ab.Amazon;
 
 namespace NicheLens.Scrapper.Api.Controllers
 {
 	public class ParserController : ApiController
 	{
-		[Route("api/parser/complete")]
-		public IHttpActionResult Post(ICollection<string> indecies)
+		private readonly IAzureCategoryProvider _categoryProvider;
+
+		public ParserController(IAzureCategoryProvider categoryProvider)
 		{
-			return Ok(MethodBase.GetCurrentMethod().GetCustomAttribute<RouteAttribute>().Template);
+			_categoryProvider = categoryProvider;
+		}
+
+		[Route("api/parser/complete")]
+		public async Task<IHttpActionResult> Post([FromBody]ICollection<string> indices)
+		{
+			var categories = _categoryProvider.GetCategories(0, indices);
+
+			await _categoryProvider.EnqueueCategories(categories);
+
+			return Ok(new { Count = categories.Count });
 		}
 	}
 }
