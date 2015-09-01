@@ -22,6 +22,8 @@ namespace NicheLens.Scrapper.WebJobs
 {
 	public class Functions
 	{
+		private static int _numberOfParserQueues;
+
 		private readonly IScrapperApi _scrapperApi;
 		private readonly IAzureCategoryProvider _categoryProvider;
 		private readonly CsvCategoryParser _categoryParser;
@@ -53,8 +55,9 @@ namespace NicheLens.Scrapper.WebJobs
 												 CancellationToken cancellationToken)
 		{
 			var blobName = HttpUtility.HtmlDecode(blob.Name);
-
 			log.WriteLine("Starting parsing {0}", blobName);
+
+			_numberOfParserQueues++;
 
 			try
 			{
@@ -67,7 +70,10 @@ namespace NicheLens.Scrapper.WebJobs
 												.ToArray();
 				log.WriteLine("Parsed {0} categories", categories.Length);
 
-				await _categoryProvider.SaveCategories(categories);
+				double find = 2.23, add = 5.9, replace = 10.67;
+				double requestCharge = Math.Round(find + Math.Max(add, replace));
+
+				await _categoryProvider.SaveCategories(requestCharge * _numberOfParserQueues, categories);
 				log.WriteLine("Saved {0} categories", categories.Length);
 
 				await blob.DeleteAsync(cancellationToken);
@@ -82,6 +88,10 @@ namespace NicheLens.Scrapper.WebJobs
 				log.WriteLine("Error parsing {0}: {1}", blobName, ex.Message);
 				ErrorLog.GetDefault(null).Log(new Error(ex));
 				throw;
+			}
+			finally
+			{
+				_numberOfParserQueues--;
 			}
 
 			log.WriteLine("Finished parsing {0}", blobName);

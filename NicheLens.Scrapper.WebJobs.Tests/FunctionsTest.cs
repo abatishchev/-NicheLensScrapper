@@ -16,6 +16,7 @@ using Elmah;
 using FluentAssertions;
 
 using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Rest;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -32,7 +33,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 	public class FunctionsTest
 	{
 		[Fact]
-		public async Task ParseCategoriesFromCsv_Should_Parse_Csv_And_Save_Categories_And_Delete_Blob()
+		public async Task ParseCategoriesFromCsv_Should_Parse_Csv_And_Save_Categories_And_Delete_Blob_And_Notify_Api()
 		{
 			// Assert
 			var fixture = new Fixture();
@@ -50,7 +51,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			client.SetupGet(c => c.Parser).Returns(operations.Object);
 
 			var provider = new Mock<IAzureCategoryProvider>();
-			provider.Setup(p => p.SaveCategories(categories)).Returns(Task.FromResult(new Document[0]));
+			provider.Setup(p => p.SaveCategories(It.IsAny<double>(), categories)).Returns(Task.FromResult(new ResourceResponse<Document>[0]));
 
 			var csvReader = new Mock<ICsvReader>();
 			csvReader.Setup(r => r.GetRecords<CsvCategory>()).Returns(csvCategories);
