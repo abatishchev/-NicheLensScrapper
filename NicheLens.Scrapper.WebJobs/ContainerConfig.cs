@@ -139,25 +139,10 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterFactory<DocumentDbOptions, DocumentDbOptionsFactory>(Lifestyle.Singleton);
 			container.RegisterInitializer((DocumentDbOptions opt) =>
 			{
-				opt.DatabaseOptions = new Dictionary<string, DatabaseOptions>
-					{
-						{
-							"Scrapper",
-							new DatabaseOptions(container.GetInstance<IStringBuilder<string, string>>())
-							{
-								DatabaseId = "88AvAA==",
-								CollectionOptions =
-								{
-									new CollectionOptions
-									{
-										CollectionName =  "Categories",
-										CollectionId = "88AvAL3WZgA=",
-										RequestUnits = 250
-									}
-								}
-							}
-						}
-					};
+				(opt.DatabaseOptions = new DatabaseOptionsCollection(container.GetInstance))
+					.AddDatabase("Scrapper", "88AvAA==")
+						.AddCollection("Categories", "88AvAL3WZgA=", 250)
+						.AddCollection("Products", "88AvAI2XrgA=", 250);
 			});
 			container.Register<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
 			container.Register<IDocumentDbClient, RetryDocumentDbClient>();

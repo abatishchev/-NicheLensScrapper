@@ -47,7 +47,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Azure">
-      <HintPath>..\packages\Ab.Azure.0.1.17\lib\net45\Ab.Azure.dll</HintPath>
+      <HintPath>..\packages\Ab.Azure.0.1.19\lib\net45\Ab.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.SimpleInjector">
