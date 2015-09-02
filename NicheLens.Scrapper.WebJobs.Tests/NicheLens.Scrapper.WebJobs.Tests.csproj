@@ -37,20 +37,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ab, Version=0.1.11.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="Ab">
       <HintPath>..\packages\Ab.0.1.11\lib\net45\Ab.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ab.Amazon, Version=0.1.11.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="Ab.Amazon, Version=0.1.11.0, Culture=neutral">
       <HintPath>..\packages\Ab.Amazon.0.1.11\lib\net45\Ab.Amazon.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Amazon.Azure">
-      <HintPath>..\packages\Ab.Amazon.Azure.0.1.9\lib\net45\Ab.Amazon.Azure.dll</HintPath>
+      <HintPath>..\packages\Ab.Amazon.Azure.0.1.11\lib\net45\Ab.Amazon.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Azure">
-      <HintPath>..\packages\Ab.Azure.0.1.15\lib\net45\Ab.Azure.dll</HintPath>
+      <HintPath>..\packages\Ab.Azure.0.1.17\lib\net45\Ab.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">

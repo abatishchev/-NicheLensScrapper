@@ -48,7 +48,7 @@ namespace NicheLens.Scrapper.Api.Client
         public async Task<HttpOperationResponse<string>> PostWithOperationResponseAsync(IList<string> indecies, CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             // Validate
-            if (indecies is ILazyCollection<string> && ((ILazyCollection<string>)indecies).IsInitialized == false || indecies == null)
+            if (indecies == null)
             {
                 throw new ArgumentNullException("indecies");
             }
@@ -117,10 +117,9 @@ namespace NicheLens.Scrapper.Api.Client
             string responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (statusCode != HttpStatusCode.OK)
             {
-                HttpOperationException<object> ex = new HttpOperationException<object>();
+                HttpOperationException ex = new HttpOperationException();
                 ex.Request = httpRequest;
                 ex.Response = httpResponse;
-                ex.Body = null;
                 if (shouldTrace)
                 {
                     ServiceClientTracing.Error(invocationId, ex);
