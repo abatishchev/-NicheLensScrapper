@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ab, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ab.0.1.12\lib\net45\Ab.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Azure.AppService, Version=0.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.AppService.0.2.2-alpha\lib\portable-win+net45+wp8+wpa81+monotouch+monoandroid\Microsoft.Azure.AppService.dll</HintPath>
       <Private>True</Private>
@@ -83,6 +87,7 @@
     <Compile Include="ScrapperApi\ScrapperApi.cs" />
     <Compile Include="ScrapperApi\ScrapperApiAppServiceExtensions.cs" />
     <Compile Include="ScrapperApi\ScrapperApiExtensions.cs" />
+    <Compile Include="ScrapperApi\ScrapperApiFactory.cs" />
     <Compile Include="ScrapperApi\ScrapperOperations.cs" />
     <Compile Include="ScrapperApi\ScrapperOperationsExtensions.cs" />
     <Compile Include="ScrapperApi\StringCollection.cs" />

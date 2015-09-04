@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Xml.Linq;
@@ -59,7 +58,7 @@ namespace NicheLens.Scrapper.WebJobs
 		private static void RegisterTypes(Container container)
 		{
 			#region Configuration
-			container.RegisterSingleton<Ab.Configuration.IConfigurationProvider, AppSettingsConfigurationProvider>();
+			container.RegisterSingleton<Ab.Configuration.IConfigurationProvider, WebConfigurationProvider>();
 
 			container.RegisterFactory<WebJobsOptions, WebJobsOptionsFactory>(Lifestyle.Singleton);
 
@@ -70,6 +69,8 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 
 			#region Providers
+			container.RegisterSingleton<IEnvironmentProvider, ConfigurationEnvironmentProvider>();
+
 			container.RegisterSingleton<IDateTimeProvider, UtcDateTimeProvider>();
 			#endregion
 
@@ -79,7 +80,7 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 
 			#region Scrapper Api
-			container.Register<IScrapperApi>(() => new ScrapperApi(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }));
+			container.RegisterFactory<IScrapperApi, ScrapperApiFactory>();
 			#endregion
 
 			#region CSV
@@ -114,7 +115,7 @@ namespace NicheLens.Scrapper.WebJobs
 			#region Scheduler
 			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, DelayTaskSchedulerFactory>(Lifestyle.Singleton);
 			container.RegisterSingleton<IScheduler>(Scheduler.Default);
-			container.Register<ITaskScheduler, DelayTaskScheduler>();
+			container.RegisterSingleton<ITaskScheduler, DelayTaskScheduler>();
 			#endregion
 
 			#region Http
