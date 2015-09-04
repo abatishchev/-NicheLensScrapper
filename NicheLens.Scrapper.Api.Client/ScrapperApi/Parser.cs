@@ -120,6 +120,7 @@ namespace NicheLens.Scrapper.Api.Client
                 HttpOperationException ex = new HttpOperationException();
                 ex.Request = httpRequest;
                 ex.Response = httpResponse;
+	            ex.Body = responseContent;
                 if (shouldTrace)
                 {
                     ServiceClientTracing.Error(invocationId, ex);

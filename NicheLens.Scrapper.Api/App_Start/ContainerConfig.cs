@@ -13,6 +13,7 @@ using Ab.Amazon.Data;
 using Ab.Azure;
 using Ab.Azure.Configuration;
 using Ab.Configuration;
+using Ab.Reflection;
 using Ab.SimpleInjector;
 using Ab.Threading;
 using Ab.Web;
@@ -50,7 +51,9 @@ namespace NicheLens.Scrapper.Api
 		private static void RegisterTypes(Container container)
 		{
 			#region Providers
+			container.RegisterSingleton<IEnvironmentProvider, ConfigurationEnvironmentProvider>();
 			container.RegisterSingleton<IDateTimeProvider, UtcDateTimeProvider>();
+			container.RegisterSingleton<IAssemblyProvider, ReflectionAssemblyProvider>();
 			#endregion
 
 			#region Configuration

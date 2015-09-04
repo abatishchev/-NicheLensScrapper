@@ -53,7 +53,7 @@
       <HintPath>..\packages\Ab.Amazon.Azure.0.1.13\lib\net45\Ab.Amazon.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ab.Azure">
+    <Reference Include="Ab.Azure, Version=0.1.22.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ab.Azure.0.1.22\lib\net45\Ab.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -239,6 +239,7 @@
     <Compile Include="App_Start\ContainerConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\InfoController.cs" />
     <Compile Include="Controllers\ParserController.cs" />
     <Compile Include="Controllers\ScrapperController.cs" />
     <Compile Include="Global.asax.cs">
