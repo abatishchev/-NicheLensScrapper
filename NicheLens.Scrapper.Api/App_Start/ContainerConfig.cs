@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Reflection;
 using System.Web.Http;
-using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Filters;
 using System.Web.Http.Validation;
 
@@ -71,7 +70,7 @@ namespace NicheLens.Scrapper.Api
 			container.RegisterCollection<DelegatingHandler>(Enumerable.Empty<DelegatingHandler>());
 
 			// Services
-			container.RegisterCollection<IExceptionLogger>(
+			container.RegisterCollection<System.Web.Http.ExceptionHandling.IExceptionLogger>(
 				new[]
 				{
 					typeof(AiExceptionLogger),
@@ -114,9 +113,9 @@ namespace NicheLens.Scrapper.Api
 			#endregion
 
 			#region Scheduler
-			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, IntervalTaskSchedulerFactory>(Lifestyle.Singleton);
+			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, DelayTaskSchedulerFactory>(Lifestyle.Singleton);
 			container.RegisterSingleton<IScheduler>(Scheduler.Default);
-			container.Register<ITaskScheduler, IntervalTaskScheduler>();
+			container.Register<ITaskScheduler, DelayTaskScheduler>();
 			#endregion
 
 			#region Http
@@ -147,7 +146,9 @@ namespace NicheLens.Scrapper.Api
 						.AddCollection("Products", "88AvAI2XrgA=", 250);
 			});
 			container.Register<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
-			container.Register<IDocumentDbClient, RetryDocumentDbClient>();
+			container.Register<IExceptionHandler, DocumentClientExceptionHandler>();
+			container.Register<IDocumentDbClient, DocumentDbClient>();
+			container.RegisterDecorator<IDocumentDbClient, ExceptionHandlingDocumentDbClientAdapter>();
 
 			container.Register<IAzureClient, AzureClient>();
 
