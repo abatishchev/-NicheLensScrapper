@@ -51,7 +51,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			client.SetupGet(c => c.Parser).Returns(operations.Object);
 
 			var provider = new Mock<IAzureCategoryProvider>();
-			provider.Setup(p => p.SaveCategories(It.IsAny<double>(), categories)).Returns(Task.FromResult(new ResourceResponse<Document>[0]));
+			provider.Setup(p => p.SaveCategories(categories)).Returns(Task.FromResult(new ResourceResponse<Document>[0]));
 
 			var csvReader = new Mock<ICsvReader>();
 			csvReader.Setup(r => r.GetRecords<CsvCategory>()).Returns(csvCategories);
@@ -83,7 +83,8 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			blob.VerifyAll();
 		}
 
-		public async Task ParseCategoriesFromCsv_Should_Log_Exception()
+		[Fact]
+		public void ParseCategoriesFromCsv_Should_Log_Exception()
 		{
 			// Assert
 			var csvReader = new Mock<ICsvReader>();
@@ -95,9 +96,26 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var functions = CreateFunctions(factory: factory.Object);
 
 			// Act
-			await functions.ParseCategoriesFromCsv(Mock.Of<ICloudBlob>(), TextWriter.Null, CancellationToken.None);
+			Func<Task> action = () => functions.ParseCategoriesFromCsv(Mock.Of<ICloudBlob>(), TextWriter.Null, CancellationToken.None);
 
 			// Assert
+			action.ShouldThrow<Exception>();
+			ErrorLog.GetDefault(null).GetErrors(0, 1, new List<object>()).Should().BeGreaterThan(0);
+		}
+
+		[Fact]
+		public void ProcessCategoryQueue_Should_Log_Exception()
+		{
+			// Assert
+			var category = new Fixture().Build<Category>().Create();
+
+			var functions = CreateFunctions();
+
+			// Act
+			Func<Task> action = () => functions.ProcessCategoryQueue(category, TextWriter.Null, CancellationToken.None);
+
+			// Assert
+			action.ShouldThrow<Exception>();
 			ErrorLog.GetDefault(null).GetErrors(0, 1, new List<object>()).Should().BeGreaterThan(0);
 		}
 

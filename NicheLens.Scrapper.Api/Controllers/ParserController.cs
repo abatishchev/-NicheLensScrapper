@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http;
 
 using Ab.Amazon;
@@ -16,13 +15,13 @@ namespace NicheLens.Scrapper.Api.Controllers
 		}
 
 		[Route("api/parser/complete")]
-		public async Task<IHttpActionResult> Post([FromBody]ICollection<string> indices)
+		public async Task<IHttpActionResult> Post([FromBody]string[] indices)
 		{
-			var categories = _categoryProvider.GetCategories(0, indices);
+			var categories = await _categoryProvider.GetCategories(indices);
 
 			await _categoryProvider.EnqueueCategories(categories);
 
-			return Ok(new { Count = categories.Count });
+			return Ok(new { Count = categories.Length });
 		}
 	}
 }

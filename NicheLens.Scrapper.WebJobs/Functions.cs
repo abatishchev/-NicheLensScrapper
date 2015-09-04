@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -23,8 +22,6 @@ namespace NicheLens.Scrapper.WebJobs
 {
 	public class Functions
 	{
-		private static int _numberOfParserQueues;
-
 		private readonly IScrapperApi _scrapperApi;
 		private readonly IAzureCategoryProvider _categoryProvider;
 		private readonly CsvCategoryParser _categoryParser;
@@ -51,8 +48,6 @@ namespace NicheLens.Scrapper.WebJobs
 			var blobName = HttpUtility.HtmlDecode(blob.Name);
 			log.WriteLine("Starting parsing {0}", blobName);
 
-			_numberOfParserQueues++;
-
 			try
 			{
 				var stream = await blob.OpenReadAsync(cancellationToken);
@@ -64,10 +59,7 @@ namespace NicheLens.Scrapper.WebJobs
 												.ToArray();
 				log.WriteLine("Parsed {0} categories", categories.Length);
 
-				double find = 2.23, add = 5.9, replace = 10.67;
-				double requestCharge = Math.Round(find + Math.Max(add, replace));
-
-				await _categoryProvider.SaveCategories(requestCharge * _numberOfParserQueues, categories);
+				await _categoryProvider.SaveCategories(categories);
 				log.WriteLine("Saved {0} categories", categories.Length);
 
 				await blob.DeleteAsync(cancellationToken);
@@ -83,19 +75,8 @@ namespace NicheLens.Scrapper.WebJobs
 				ErrorLog.GetDefault(null).Log(new Error(ex));
 				throw;
 			}
-			finally
-			{
-				_numberOfParserQueues--;
-			}
 
 			log.WriteLine("Finished parsing {0}", blobName);
-		}
-
-		[NoAutomaticTrigger]
-		[Conditional("DEBUG")]
-		public void GetNumberOfParserQueues(TextWriter log)
-		{
-			log.WriteLine("Number of parser queues is {0}", _numberOfParserQueues);
 		}
 
 		public Task ProcessCategoryQueue([QueueTrigger("categories")] Category category,
@@ -104,7 +85,17 @@ namespace NicheLens.Scrapper.WebJobs
 		{
 			log.WriteLine("Starting scrapping {0} (id={1})", category.Name, category.NodeId);
 
-			return Task.CompletedTask;
+			try
+			{
+				//throw new Exception();
+				return Task.CompletedTask;
+			}
+			catch (Exception ex)
+			{
+				log.WriteLine("Error scrapping category {0} (id={1}): {2}", category.Name, category.NodeId, ex.Message);
+				ErrorLog.GetDefault(null).Log(new Error(ex));
+				throw;
+			}
 		}
 	}
 }
