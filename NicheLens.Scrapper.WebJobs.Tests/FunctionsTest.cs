@@ -26,6 +26,7 @@ using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
 using Ploeh.AutoFixture;
+using SimpleInjector;
 using Xunit;
 
 namespace NicheLens.Scrapper.WebJobs.Tests
@@ -48,7 +49,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var operations = new Mock<IParser>();
 			operations.Setup(o => o.PostWithOperationResponseAsync(It.IsAny<string[]>(), CancellationToken.None)).ReturnsAsync(new HttpOperationResponse<string>());
 			var client = new Mock<IScrapperApi>();
-			client.SetupGet(c => c.Parser).Returns(operations.Object);
+			client.Setup(c => c.Parser).Returns(operations.Object);
 
 			var provider = new Mock<IAzureCategoryProvider>();
 			provider.Setup(p => p.SaveCategories(categories)).Returns(Task.FromResult(new ResourceResponse<Document>[0]));
@@ -60,11 +61,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			factory.Setup(f => f.Create(It.IsAny<TextReader>())).Returns(csvReader.Object);
 
 			var converter = new Mock<IConverter<CsvCategory, Category>>();
-			converter.Setup(c => c.Convert(It.IsIn(csvCategories))).Returns(() =>
-				{
-					e.MoveNext();
-					return e.Current;
-				});
+			converter.Setup(c => c.Convert(It.IsIn(csvCategories))).Returns(() => e.MoveNext() ? e.Current : null);
 
 			var blob = new Mock<ICloudBlob>();
 			blob.Setup(b => b.OpenReadAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new MemoryStream());
@@ -124,18 +121,16 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 												 IFactory<ICsvReader, TextReader> factory = null,
 												 IConverter<CsvCategory, Category> converter = null)
 		{
+			var container = new Container();
+			ServiceCenter.Current = c => container;
+			container.Register<ErrorLog>(() => new MemoryErrorLog());
+
 			return new Functions(
 				apiClient ?? Mock.Of<IScrapperApi>(),
 				provider ?? Mock.Of<IAzureCategoryProvider>(),
 				new CsvCategoryParser(factory),
-				converter ?? CreateConverter(),
+				converter ?? Mock.Of<IConverter<CsvCategory, Category>>(),
 				new FilterAdapter<Category>(true));
-		}
-
-		private static IConverter<CsvCategory, Category> CreateConverter()
-		{
-			var container = ContainerConfig.CreateContainer();
-			return container.GetInstance<MappingCsvCategoryConverter>();
 		}
 	}
 }
