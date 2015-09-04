@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ab, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Ab">
       <HintPath>..\packages\Ab.0.1.12\lib\net45\Ab.dll</HintPath>
       <Private>True</Private>
     </Reference>

@@ -73,8 +73,8 @@ namespace NicheLens.Scrapper.Api
 			container.RegisterCollection<System.Web.Http.ExceptionHandling.IExceptionLogger>(
 				new[]
 				{
-					typeof(AiExceptionLogger),
-					typeof(Elmah.Contrib.WebApi.ElmahExceptionLogger)
+					typeof(Elmah.Contrib.WebApi.ElmahExceptionLogger),
+					typeof(AiExceptionLogger)
 				});
 
 			// Controllers

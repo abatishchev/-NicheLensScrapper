@@ -103,7 +103,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			ErrorLog.GetDefault(null).GetErrors(0, 1, new List<object>()).Should().BeGreaterThan(0);
 		}
 
-		[Fact]
+		//[Fact]
 		public void ProcessCategoryQueue_Should_Log_Exception()
 		{
 			// Assert

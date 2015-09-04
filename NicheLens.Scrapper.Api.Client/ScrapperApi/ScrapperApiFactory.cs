@@ -32,6 +32,7 @@ namespace NicheLens.Scrapper.Api.Client
 				case EnvironmentName.Production:
 					return "https://microsoft-apiapp9b2b9b0667ef43058cfe467f6b8d6828.azurewebsites.net";
 				case EnvironmentName.Local:
+				case EnvironmentName.Testing:
 					return "http://localhost:8088";
 				default:
 					throw new NotImplementedException();
