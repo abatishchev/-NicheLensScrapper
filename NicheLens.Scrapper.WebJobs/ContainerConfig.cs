@@ -31,6 +31,7 @@ using CsvHelper;
 using Elmah;
 using Elmah.AzureTableStorage;
 
+using Microsoft.ApplicationInsights;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -88,6 +89,10 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterFactory<ICsvReader, TextReader, CsvReaderFactory>();
 			container.Register<IConverter<CsvCategory, Category>, MappingCsvCategoryConverter>();
 			container.Register<IFilter<Category>, EmptySearchIndexCategoryFIlter>();
+			#endregion
+
+			#region AppInsights
+			container.Register<TelemetryClient>(() => new TelemetryClient());
 			#endregion
 
 			#region  Elmah
