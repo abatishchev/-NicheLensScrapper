@@ -101,6 +101,10 @@ namespace NicheLens.Scrapper.WebJobs
 					}));
 			#endregion
 
+			#region Raygun
+			container.Register(() => new Mindscape.Raygun4Net.RaygunClient(container.GetInstance<Ab.Configuration.IConfigurationProvider>().GetValue("raygun:ApiKey")));
+			#endregion
+
 			#region AutoMapper
 			container.RegisterSingleton<ITypeMapFactory, TypeMapFactory>();
 			container.RegisterCollection<IObjectMapper>(MapperRegistry.Mappers);

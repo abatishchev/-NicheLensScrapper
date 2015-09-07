@@ -9,6 +9,7 @@ using System.Web.Http.Validation;
 
 using Ab.WebApi.SimpleInjector;
 
+using Mindscape.Raygun4Net.WebApi;
 using Newtonsoft.Json;
 using SimpleInjector;
 using WebApiContrib.Configuration;
@@ -24,6 +25,8 @@ namespace NicheLens.Scrapper.Api
 			config.MapHttpAttributeRoutes();
 
 			config.UseWebConfigCustomErrors();
+
+			RaygunWebApiClient.Attach(config);
 
 			ConfigureFilters(config.Filters, container);
 			ConfigureHandlers(config.MessageHandlers, container);
