@@ -22,19 +22,16 @@ namespace NicheLens.Scrapper.WebJobs
 {
 	public class Functions
 	{
-		private readonly IScrapperApi _scrapperApi;
 		private readonly IAzureCategoryProvider _categoryProvider;
 		private readonly CsvCategoryParser _categoryParser;
 		private readonly IConverter<CsvCategory, Category> _categoryConverter;
 		private readonly IFilter<Category> _categoryFilter;
 
-		public Functions(IScrapperApi scrapperApi,
-						 IAzureCategoryProvider categoryProvider,
+		public Functions(IAzureCategoryProvider categoryProvider,
 						 CsvCategoryParser categoryParser,
 						 IConverter<CsvCategory, Category> categoryConverter,
 						 IFilter<Category> categoryFilter)
 		{
-			_scrapperApi = scrapperApi;
 			_categoryProvider = categoryProvider;
 			_categoryParser = categoryParser;
 			_categoryConverter = categoryConverter;
@@ -62,12 +59,11 @@ namespace NicheLens.Scrapper.WebJobs
 				await _categoryProvider.SaveCategories(categories);
 				log.WriteLine("Saved {0} categories", categories.Length);
 
+				await _categoryProvider.EnqueueCategories(categories);
+				log.WriteLine("Enqueued {0} categories", categories.Length);
+
 				await blob.DeleteAsync(cancellationToken);
 				log.WriteLine("Blob {0} deleted", blobName);
-
-				var indecies = categories.Select(g => g.SearchIndex).Distinct().ToArray();
-				await _scrapperApi.Parser.PostWithOperationResponseAsync(indecies, cancellationToken);
-				log.WriteLine("Notified about {0} indecies", String.Join(",", indecies));
 			}
 			catch (Exception ex)
 			{

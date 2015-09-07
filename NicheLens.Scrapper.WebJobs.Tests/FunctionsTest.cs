@@ -17,12 +17,10 @@ using FluentAssertions;
 
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using Microsoft.Rest;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 using Moq;
 
-using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
 using Ploeh.AutoFixture;
@@ -46,11 +44,6 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 									.ToArray();
 			var e = categories.AsEnumerable().GetEnumerator();
 
-			var operations = new Mock<IParser>();
-			operations.Setup(o => o.PostWithOperationResponseAsync(It.IsAny<string[]>(), CancellationToken.None)).ReturnsAsync(new HttpOperationResponse<string>());
-			var client = new Mock<IScrapperApi>();
-			client.Setup(c => c.Parser).Returns(operations.Object);
-
 			var provider = new Mock<IAzureCategoryProvider>();
 			provider.Setup(p => p.SaveCategories(categories)).Returns(Task.FromResult(new ResourceResponse<Document>[0]));
 
@@ -67,13 +60,12 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			blob.Setup(b => b.OpenReadAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new MemoryStream());
 			blob.Setup(b => b.DeleteAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-			var functions = CreateFunctions(client.Object, provider.Object, factory.Object, converter.Object);
+			var functions = CreateFunctions(provider.Object, factory.Object, converter.Object);
 
 			// Act
 			await functions.ParseCategoriesFromCsv(blob.Object, TextWriter.Null, CancellationToken.None);
 
 			// Assert
-			client.VerifyAll();
 			provider.VerifyAll();
 			factory.VerifyAll();
 			converter.VerifyAll();
@@ -116,8 +108,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			ErrorLog.GetDefault(null).GetErrors(0, 1, new List<object>()).Should().BeGreaterThan(0);
 		}
 
-		private static Functions CreateFunctions(IScrapperApi apiClient = null,
-												 IAzureCategoryProvider provider = null,
+		private static Functions CreateFunctions(IAzureCategoryProvider provider = null,
 												 IFactory<ICsvReader, TextReader> factory = null,
 												 IConverter<CsvCategory, Category> converter = null)
 		{
@@ -126,7 +117,6 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			container.Register<ErrorLog>(() => new MemoryErrorLog());
 
 			return new Functions(
-				apiClient ?? Mock.Of<IScrapperApi>(),
 				provider ?? Mock.Of<IAzureCategoryProvider>(),
 				new CsvCategoryParser(factory),
 				converter ?? Mock.Of<IConverter<CsvCategory, Category>>(),
