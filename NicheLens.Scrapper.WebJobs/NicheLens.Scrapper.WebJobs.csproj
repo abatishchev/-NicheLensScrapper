@@ -193,6 +193,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\ConfigurationNameResolver.cs" />
     <Compile Include="Configuration\ContainerJobActivator.cs" />
     <Compile Include="Configuration\JobHostFactory.cs" />
     <Compile Include="Configuration\WebJobsOptionsFactory.cs" />

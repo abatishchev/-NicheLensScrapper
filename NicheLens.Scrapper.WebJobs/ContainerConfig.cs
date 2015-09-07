@@ -78,6 +78,7 @@ namespace NicheLens.Scrapper.WebJobs
 
 			#region WebJobs
 			container.RegisterSingleton<IJobActivator, ContainerJobActivator>();
+			container.RegisterSingleton<INameResolver, ConfigurationNameResolver>();
 			container.RegisterFactory<JobHost, JobHostFactory>();
 			#endregion
 

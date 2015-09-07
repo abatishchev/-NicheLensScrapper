@@ -9,20 +9,23 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 	{
 		private readonly WebJobsOptions _options;
 		private readonly IJobActivator _activator;
+		private readonly INameResolver _nameResolver;
 
-		public JobHostFactory(WebJobsOptions options, IJobActivator activator)
+		public JobHostFactory(WebJobsOptions options, IJobActivator activator, INameResolver nameResolver)
 		{
 			_options = options;
 			_activator = activator;
+			_nameResolver = nameResolver;
 		}
 
 		public JobHost Create()
 		{
 			var configuration = new JobHostConfiguration
 			{
+				JobActivator = _activator,
+				NameResolver = _nameResolver,
 				DashboardConnectionString = _options.ConnectionString,
 				StorageConnectionString = _options.ConnectionString,
-				JobActivator = _activator,
 				Queues =
 				{
 					MaxPollingInterval = _options.MaxPollingInterval,

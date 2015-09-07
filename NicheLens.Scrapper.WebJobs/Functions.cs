@@ -38,7 +38,7 @@ namespace NicheLens.Scrapper.WebJobs
 			_categoryFilter = categoryFilter;
 		}
 
-		public async Task ParseCategoriesFromCsv([BlobTrigger("categories-csv")] ICloudBlob blob,
+		public async Task ParseCategoriesFromCsv([BlobTrigger("%azure:Queue:CategoriesCsv%")] ICloudBlob blob,
 												 TextWriter log,
 												 CancellationToken cancellationToken)
 		{
@@ -75,7 +75,7 @@ namespace NicheLens.Scrapper.WebJobs
 			log.WriteLine("Finished parsing {0}", blobName);
 		}
 
-		public Task ProcessCategoryQueue([QueueTrigger("categories")] Category category,
+		public Task ProcessCategoryQueue([QueueTrigger("%azure:Queue:Categories%")] Category category,
 										 TextWriter log,
 										 CancellationToken cancellationToken)
 		{
