@@ -64,8 +64,8 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.RegisterFactory<WebJobsOptions, WebJobsOptionsFactory>(Lifestyle.Singleton);
 
-			container.Register<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>(Lifestyle.Singleton);
-			container.Register<IOptionsProvider<AwsOptions[]>, AzureAwsOptionsProvider>(Lifestyle.Singleton);
+			container.RegisterSingleton<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>();
+			container.RegisterSingleton<IOptionsProvider<AwsOptions[]>, AzureAwsOptionsProvider>();
 			container.RegisterDecorator<IOptionsProvider<AwsOptions>, LazyOptionsProviderAdapter<AwsOptions>>(Lifestyle.Singleton);
 			container.RegisterFactory<AwsOptions, RoundrobinAwsOptionsFactory>(Lifestyle.Singleton);
 			#endregion
@@ -76,8 +76,8 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterSingleton<IDateTimeProvider, UtcDateTimeProvider>();
 			#endregion
 
-			#region Web Jobs
-			container.Register<IJobActivator, ContainerJobActivator>(Lifestyle.Singleton);
+			#region WebJobs
+			container.RegisterSingleton<IJobActivator, ContainerJobActivator>();
 			container.RegisterFactory<JobHost, JobHostFactory>();
 			#endregion
 
@@ -143,9 +143,9 @@ namespace NicheLens.Scrapper.WebJobs
 			container.Register<ITableClient, AzureTableClient>();
 			container.Register<IQueueClient, AzureQueueClient>();
 
-			container.Register<IStringBuilder<string>, DatabaseLinkBuilder>(Lifestyle.Singleton);
-			container.Register<IStringBuilder<string, string>, CollectionLinkBuilder>(Lifestyle.Singleton);
-			container.Register<IStringBuilder<string, string, string>, DocumentLinkBuilder>(Lifestyle.Singleton);
+			container.RegisterSingleton<IStringBuilder<string>, DatabaseLinkBuilder>();
+			container.RegisterSingleton<IStringBuilder<string, string>, CollectionLinkBuilder>();
+			container.RegisterSingleton<IStringBuilder<string, string, string>, DocumentLinkBuilder>();
 
 			container.RegisterFactory<DocumentDbOptions, DocumentDbOptionsFactory>(Lifestyle.Singleton);
 			container.RegisterInitializer((DocumentDbOptions opt) =>

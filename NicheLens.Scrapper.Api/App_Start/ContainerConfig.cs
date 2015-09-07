@@ -137,9 +137,9 @@ namespace NicheLens.Scrapper.Api
 			container.Register<ITableClient, AzureTableClient>();
 			container.Register<IQueueClient, AzureQueueClient>();
 
-			container.Register<IStringBuilder<string>, DatabaseLinkBuilder>(Lifestyle.Singleton);
-			container.Register<IStringBuilder<string, string>, CollectionLinkBuilder>(Lifestyle.Singleton);
-			container.Register<IStringBuilder<string, string, string>, DocumentLinkBuilder>(Lifestyle.Singleton);
+			container.RegisterSingleton<IStringBuilder<string>, DatabaseLinkBuilder>();
+			container.RegisterSingleton<IStringBuilder<string, string>, CollectionLinkBuilder>();
+			container.RegisterSingleton<IStringBuilder<string, string, string>, DocumentLinkBuilder>();
 
 			container.RegisterFactory<DocumentDbOptions, DocumentDbOptionsFactory>(Lifestyle.Singleton);
 			container.RegisterInitializer((DocumentDbOptions opt) =>
