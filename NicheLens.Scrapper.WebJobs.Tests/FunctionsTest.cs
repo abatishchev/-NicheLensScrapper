@@ -15,8 +15,6 @@ using CsvHelper;
 using Elmah;
 using FluentAssertions;
 
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 using Moq;
@@ -32,7 +30,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 	public class FunctionsTest
 	{
 		[Fact]
-		public async Task ParseCategoriesFromCsv_Should_Parse_Csv_And_Save_Categories_And_Delete_Blob_And_Notify_Api()
+		public async Task ParseCategoriesFromCsv_Should_Parse_Csv_And_Save_Categories_And_Enqueue_Categories_And_Delete_Blob()
 		{
 			// Assert
 			var fixture = new Fixture();

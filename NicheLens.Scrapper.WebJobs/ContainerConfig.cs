@@ -32,6 +32,7 @@ using Elmah;
 using Elmah.AzureTableStorage;
 
 using Microsoft.ApplicationInsights;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -154,10 +155,9 @@ namespace NicheLens.Scrapper.WebJobs
 						.AddCollection("Categories", "88AvAL3WZgA=", 250)
 						.AddCollection("Products", "88AvAI2XrgA=", 250);
 			});
-			container.Register<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
-			container.Register<IExceptionHandler, DocumentClientExceptionHandler>();
-			container.Register<IDocumentDbClient, DocumentDbClient>();
-			container.RegisterDecorator<IDocumentDbClient, ExceptionHandlingDocumentDbClientAdapter>();
+			container.RegisterSingleton<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
+			container.RegisterFactory<DocumentClient, DocumentClientFactory>();
+			container.Register<IDocumentDbClient, ReliableDocumentDbClient>();
 
 			container.Register<IAzureClient, AzureClient>();
 
