@@ -28,7 +28,6 @@ using Elmah.AzureTableStorage;
 using FluentValidation.Attributes;
 using FluentValidation.WebApi;
 
-using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Documents.Client;
 
 using SimpleInjector;
@@ -96,6 +95,10 @@ namespace NicheLens.Scrapper.Api
 					}));
 			#endregion
 
+			#region AppInsights
+			container.Register(() => new Microsoft.ApplicationInsights.TelemetryClient());
+			#endregion
+
 			#region AutoMapper
 			container.RegisterSingleton<ITypeMapFactory, TypeMapFactory>();
 			container.RegisterCollection<IObjectMapper>(MapperRegistry.Mappers);
@@ -105,10 +108,6 @@ namespace NicheLens.Scrapper.Api
 			container.RegisterSingleton<AutoMapper.IConfigurationProvider>(container.GetInstance<ConfigurationStore>);
 
 			container.RegisterSingleton<IMappingEngine>(() => new MappingEngine(container.GetInstance<AutoMapper.IConfigurationProvider>()));
-			#endregion
-
-			#region AppInsights
-			container.Register<TelemetryClient>(() => new TelemetryClient());
 			#endregion
 
 			#region Fluent Validation
@@ -155,11 +154,12 @@ namespace NicheLens.Scrapper.Api
 
 			container.Register<IAzureClient, AzureClient>();
 
-			container.Register<IConverter<string, Product>, JsonProductConverter>();
 			container.Register<IConverter<Category, string>, JsonCategoryConverter>();
 			container.Register<IConverter<Category, CategoryDocument>, MappingCategoryDocumentConverter>();
 			container.Register<IAzureProductProvider, AzureProductProvider>();
 
+			container.Register<IConverter<string, Product>, JsonProductConverter>();
+			container.Register<IConverter<Product, ProductDocument>, MappingProductDocumentConverter>();
 			container.Register<IAzureCategoryProvider, AzureCategoryProvider>();
 			#endregion
 

@@ -19,7 +19,7 @@ namespace NicheLens.Scrapper.Api.Controllers
 		[Route("api/info/version")]
 		public IHttpActionResult GetVersion()
 		{
-			return Ok(_assemblyProvider.GetExecutingAssembly().GetName().Version.ToString());
+			return Ok(_assemblyProvider.GetCallingAssembly().GetName().Version.ToString());
 		}
 
 		[Route("api/info/environment")]

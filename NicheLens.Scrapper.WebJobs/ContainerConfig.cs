@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Reactive.Concurrency;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 using Ab;
@@ -11,7 +14,6 @@ using Ab.Amazon.Cryptography;
 using Ab.Amazon.Data;
 using Ab.Amazon.Filtering;
 using Ab.Amazon.Pipeline;
-using Ab.Amazon.Validation;
 using Ab.Amazon.Web;
 using Ab.Azure;
 using Ab.Azure.Configuration;
@@ -20,7 +22,6 @@ using Ab.Filtering;
 using Ab.Pipeline;
 using Ab.SimpleInjector;
 using Ab.Threading;
-using Ab.Validation;
 using Ab.Web;
 
 using AutoMapper;
@@ -31,7 +32,6 @@ using CsvHelper;
 using Elmah;
 using Elmah.AzureTableStorage;
 
-using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -66,7 +66,7 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.RegisterSingleton<IConverter<DynamicTableEntity, AwsOptions>, DynamicAwsOptionsConverter>();
 			container.RegisterSingleton<IOptionsProvider<AwsOptions[]>, AzureAwsOptionsProvider>();
-			container.RegisterDecorator<IOptionsProvider<AwsOptions>, LazyOptionsProviderAdapter<AwsOptions>>(Lifestyle.Singleton);
+			container.RegisterDecorator<IOptionsProvider<AwsOptions[]>, LazyOptionsProviderAdapter<AwsOptions[]>>(Lifestyle.Singleton);
 			container.RegisterFactory<AwsOptions, RoundrobinAwsOptionsFactory>(Lifestyle.Singleton);
 			#endregion
 
@@ -80,21 +80,16 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterSingleton<IJobActivator, ContainerJobActivator>();
 			container.RegisterSingleton<INameResolver, ConfigurationNameResolver>();
 			container.RegisterFactory<JobHost, JobHostFactory>();
+
+			container.Register<Functions>();
 			#endregion
 
 			#region Scrapper Api
 			container.RegisterFactory<IScrapperApi, ScrapperApiFactory>();
 			#endregion
 
-			#region CSV
-			container.RegisterSingleton<CsvFactory>();
-			container.RegisterFactory<ICsvReader, TextReader, CsvReaderFactory>();
-			container.Register<IConverter<CsvCategory, Category>, MappingCsvCategoryConverter>();
-			container.Register<IFilter<Category>, EmptySearchIndexCategoryFIlter>();
-			#endregion
-
-			#region AppInsights
-			container.Register<TelemetryClient>(() => new TelemetryClient());
+			#region Logging
+			container.Register<ILogger, Logger>();
 			#endregion
 
 			#region  Elmah
@@ -108,8 +103,19 @@ namespace NicheLens.Scrapper.WebJobs
 					}));
 			#endregion
 
+			#region AppInsights
+			container.Register(() => new Microsoft.ApplicationInsights.TelemetryClient());
+			#endregion
+
 			#region Raygun
 			container.Register(() => new Mindscape.Raygun4Net.RaygunClient(container.GetInstance<Ab.Configuration.IConfigurationProvider>().GetValue("raygun:ApiKey")));
+			#endregion
+
+			#region CSV
+			container.RegisterSingleton<CsvFactory>();
+			container.RegisterFactory<ICsvReader, TextReader, CsvReaderFactory>();
+			container.Register<IConverter<CsvCategory, Category>, MappingCsvCategoryConverter>();
+			container.Register<IFilter<Category>, EmptySearchIndexCategoryFIlter>();
 			#endregion
 
 			#region AutoMapper
@@ -127,6 +133,11 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, DelayTaskSchedulerFactory>(Lifestyle.Singleton);
 			container.RegisterSingleton<IScheduler>(Scheduler.Default);
 			container.RegisterSingleton<ITaskScheduler, DelayTaskScheduler>();
+			container.RegisterInitializer((TaskSchedulerSettings s) =>
+				{
+					var options = Task.Run(async () => await container.GetInstance<IOptionsProvider<AwsOptions[]>>().GetOptions()).Result;
+					s.RequestDelay = TimeSpan.FromMilliseconds(1000.0 / options.Length);
+				});
 			#endregion
 
 			#region Http
@@ -162,11 +173,12 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.Register<IAzureClient, AzureClient>();
 
-			container.Register<IConverter<string, Product>, JsonProductConverter>();
 			container.Register<IConverter<Category, string>, JsonCategoryConverter>();
 			container.Register<IConverter<Category, CategoryDocument>, MappingCategoryDocumentConverter>();
 			container.Register<IAzureProductProvider, AzureProductProvider>();
 
+			container.Register<IConverter<string, Product>, JsonProductConverter>();
+			container.Register<IConverter<Product, ProductDocument>, MappingProductDocumentConverter>();
 			container.Register<IAzureCategoryProvider, AzureCategoryProvider>();
 			#endregion
 
@@ -179,8 +191,7 @@ namespace NicheLens.Scrapper.WebJobs
 			container.Register<IQuerySigner, AwsQuerySigner>();
 			container.Register<IUrlBuilder, AwsUrlBuilder>();
 
-			container.Register<IValidator<XElement>, XmlRequestValidator>();
-			container.Register<IItemSelector, XmlItemSelector>();
+			container.RegisterFactory<IItemResponse, string, XmlItemResponseFactory>();
 			container.Register<IPipeline<Product, XElement, SearchCriteria>, ResponseGroupProductPipeline>();
 			container.RegisterFactory<Product, XElement, SearchCriteria, XmlProductFactory>();
 			container.Register<IFilter<XElement>, PrimaryVariantlItemFilter>();
@@ -188,6 +199,8 @@ namespace NicheLens.Scrapper.WebJobs
 			container.Register<IAwsClient, XmlAwsClient>();
 
 			container.Register<IAwsProductProvider, AwsProductProvider>();
+
+			container.Register<IAwsCategoryProvider, AwsCategoryProvider>();
 			#endregion
 		}
 
@@ -201,6 +214,7 @@ namespace NicheLens.Scrapper.WebJobs
 
 				configuration.AddProfile<CsvCategoryMappingProfile>();
 				configuration.AddProfile<CategoryDocumentMappingProfile>();
+				configuration.AddProfile<ProductDocumentMappingProfile>();
 			});
 		}
 	}

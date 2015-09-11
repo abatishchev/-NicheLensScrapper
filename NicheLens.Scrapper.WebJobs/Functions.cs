@@ -10,29 +10,35 @@ using Ab.Amazon;
 using Ab.Amazon.Data;
 using Ab.Filtering;
 
-using Elmah;
-
 using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.WebJobs.Data;
 
 namespace NicheLens.Scrapper.WebJobs
 {
 	public class Functions
 	{
-		private readonly IAzureCategoryProvider _categoryProvider;
+		private readonly ILogger _logger;
+		private readonly IAwsCategoryProvider _awsCategoryProvider;
+		private readonly IAzureCategoryProvider _azureCategoryProvider;
+		private readonly IAzureProductProvider _azureProductProvider;
 		private readonly CsvCategoryParser _categoryParser;
 		private readonly IConverter<CsvCategory, Category> _categoryConverter;
 		private readonly IFilter<Category> _categoryFilter;
 
-		public Functions(IAzureCategoryProvider categoryProvider,
+		public Functions(ILogger logger,
+						 IAwsCategoryProvider awsCategoryProvider,
+						 IAzureCategoryProvider azureCategoryProvider,
+						 IAzureProductProvider azureProductProvider,
 						 CsvCategoryParser categoryParser,
 						 IConverter<CsvCategory, Category> categoryConverter,
 						 IFilter<Category> categoryFilter)
 		{
-			_categoryProvider = categoryProvider;
+			_logger = logger;
+			_awsCategoryProvider = awsCategoryProvider;
+			_azureCategoryProvider = azureCategoryProvider;
+			_azureProductProvider = azureProductProvider;
 			_categoryParser = categoryParser;
 			_categoryConverter = categoryConverter;
 			_categoryFilter = categoryFilter;
@@ -56,10 +62,10 @@ namespace NicheLens.Scrapper.WebJobs
 												.ToArray();
 				log.WriteLine("Parsed {0} categories", categories.Length);
 
-				await _categoryProvider.SaveCategories(categories);
+				await _azureCategoryProvider.SaveCategories(categories);
 				log.WriteLine("Saved {0} categories", categories.Length);
 
-				await _categoryProvider.EnqueueCategories(categories);
+				await _azureCategoryProvider.EnqueueCategories(categories);
 				log.WriteLine("Enqueued {0} categories", categories.Length);
 
 				await blob.DeleteAsync(cancellationToken);
@@ -68,30 +74,35 @@ namespace NicheLens.Scrapper.WebJobs
 			catch (Exception ex)
 			{
 				log.WriteLine("Error parsing {0}: {1}", blobName, ex.Message);
-				ErrorLog.GetDefault(null).Log(new Error(ex));
+				_logger.LogException(ex);
 				throw;
 			}
 
 			log.WriteLine("Finished parsing {0}", blobName);
 		}
 
-		public Task ProcessCategoryQueue([QueueTrigger("%azure:Queue:Categories%")] Category category,
-										 TextWriter log,
-										 CancellationToken cancellationToken)
+		public async Task ProcessCategoryQueue([QueueTrigger("%azure:Queue:Categories%")] Category category,
+											   TextWriter log,
+											   CancellationToken cancellationToken)
 		{
 			log.WriteLine("Starting scrapping {0} (id={1})", category.Name, category.NodeId);
 
 			try
 			{
-				//throw new Exception();
-				return Task.CompletedTask;
+				var products = await _awsCategoryProvider.GetProductsInCategory(category);
+
+				log.WriteLine("Found {0} products", products.Length);
+
+				await _azureProductProvider.SaveProducts(products);
 			}
 			catch (Exception ex)
 			{
 				log.WriteLine("Error scrapping category {0} (id={1}): {2}", category.Name, category.NodeId, ex.Message);
-				ErrorLog.GetDefault(null).Log(new Error(ex));
+				_logger.LogException(ex);
 				throw;
 			}
+
+			log.WriteLine("Finished scrapping {0} (id={1})", category.Name, category.NodeId);
 		}
 	}
 }
