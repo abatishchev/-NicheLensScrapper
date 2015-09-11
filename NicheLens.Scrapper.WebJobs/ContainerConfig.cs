@@ -81,7 +81,8 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterSingleton<INameResolver, ConfigurationNameResolver>();
 			container.RegisterFactory<JobHost, JobHostFactory>();
 
-			container.Register<Functions>();
+			container.Register<ParseCategoriesFromCsvFunction>();
+			container.Register<ProcessCategoryQueueFunction>();
 			#endregion
 
 			#region Scrapper Api

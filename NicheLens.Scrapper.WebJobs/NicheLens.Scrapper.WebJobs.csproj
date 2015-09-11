@@ -216,7 +216,8 @@
     <Compile Include="Data\CsvReaderFactory.cs" />
     <Compile Include="Data\EmptySearchIndexCategoryFIlter.cs" />
     <Compile Include="Data\MappingCsvCategoryConverter.cs" />
-    <Compile Include="Functions.cs" />
+    <Compile Include="ParseCategoriesFromCsvFunction.cs" />
+    <Compile Include="ProcessCategoryQueueFunction.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

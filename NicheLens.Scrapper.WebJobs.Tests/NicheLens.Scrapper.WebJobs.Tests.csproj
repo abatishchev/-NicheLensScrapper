@@ -207,7 +207,8 @@
     <Compile Include="Data\CsvCategoryParserTest.cs" />
     <Compile Include="Data\CsvReaderFactoryTest.cs" />
     <Compile Include="Data\MappingCsvCategoryConverterTest.cs" />
-    <Compile Include="FunctionsTest.cs" />
+    <Compile Include="ParseCategoriesFromCsvFunctionTest.cs" />
+    <Compile Include="ProcessCategoryQueueFunctionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

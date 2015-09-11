@@ -24,7 +24,7 @@ using Xunit;
 
 namespace NicheLens.Scrapper.WebJobs.Tests
 {
-	public class FunctionsTest
+	public class ParseCategoriesFromCsvFunctionTest
 	{
 		[Fact]
 		public async Task ParseCategoriesFromCsv_Should_Parse_Csv_And_Save_Categories_And_Enqueue_Categories_And_Delete_Blob()
@@ -80,7 +80,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var blob = new Mock<ICloudBlob>();
 			blob.Setup(b => b.OpenReadAsync(It.IsAny<CancellationToken>())).Throws(exception);
 
-			var functions = CreateFunctions(logger.Object);
+			var functions = CreateFunctions(logger: logger.Object);
 
 			// Act
 			Func<Task> action = () => functions.ParseCategoriesFromCsv(blob.Object, TextWriter.Null, CancellationToken.None);
@@ -90,72 +90,16 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			logger.VerifyAll();
 		}
 
-		[Fact]
-		public async Task ProcessCategoryQueue_Should_Get_Products_And_Save_Products()
+		private static ParseCategoriesFromCsvFunction CreateFunctions(IAzureCategoryProvider azureCategoryProvider = null,
+																	  IFactory<ICsvReader, TextReader> factory = null,
+																	  IConverter<CsvCategory, Category> converter = null,
+																	  ILogger logger = null)
 		{
-			// Arrange
-			var fixture = new Fixture();
-			var category = fixture.Create<Category>();
-
-			var categoryProvider = new Mock<IAwsCategoryProvider>();
-
-			var productProvider = new Mock<IAzureProductProvider>();
-
-			var functions = CreateFunctions(awsCategoryProvider: categoryProvider.Object, azureProductProvider: productProvider.Object);
-
-			// Act
-			await functions.ProcessCategoryQueue(category, TextWriter.Null, CancellationToken.None);
-
-			// Assert
-			categoryProvider.VerifyAll();
-			productProvider.VerifyAll();
-		}
-
-		[Fact]
-		public void ProcessCategoryQueue_Should_Log_Exception()
-		{
-			// Arrange
-			var exception = new Exception();
-
-			var logger = new Mock<ILogger>();
-			logger.Setup(l => l.LogException(exception));
-
-			var provider = new Mock<IAwsCategoryProvider>();
-			provider.Setup(p => p.GetProductsInCategory(It.IsAny<Category>())).Throws(exception);
-
-			var category = new Fixture().Create<Category>();
-
-			var functions = CreateFunctions(logger.Object, provider.Object);
-
-			// Act
-			Func<Task> action = () => functions.ProcessCategoryQueue(category, TextWriter.Null, CancellationToken.None);
-
-			// Assert
-			action.ShouldThrow<Exception>();
-			logger.VerifyAll();
-		}
-
-		private static Functions CreateFunctions(IAzureCategoryProvider provider,
-												 IFactory<ICsvReader, TextReader> factory,
-												 IConverter<CsvCategory, Category> converter)
-		{
-			return CreateFunctions(null, null, provider, null, factory, converter);
-		}
-
-		private static Functions CreateFunctions(ILogger logger = null,
-												 IAwsCategoryProvider awsCategoryProvider = null,
-												 IAzureCategoryProvider azureCategoryProvider = null,
-												 IAzureProductProvider azureProductProvider = null,
-												 IFactory<ICsvReader, TextReader> factory = null,
-												 IConverter<CsvCategory, Category> converter = null)
-		{
-			return new Functions(logger ?? Mock.Of<ILogger>(),
-								 awsCategoryProvider ?? Mock.Of<IAwsCategoryProvider>(),
-								 azureCategoryProvider ?? Mock.Of<IAzureCategoryProvider>(),
-								 azureProductProvider ?? Mock.Of<IAzureProductProvider>(),
-								 new CsvCategoryParser(factory),
-								 converter ?? Mock.Of<IConverter<CsvCategory, Category>>(),
-								 new FilterAdapter<Category>(true));
+			return new ParseCategoriesFromCsvFunction(logger ?? Mock.Of<ILogger>(),
+													  azureCategoryProvider ?? Mock.Of<IAzureCategoryProvider>(),
+													  new CsvCategoryParser(factory),
+													  converter ?? Mock.Of<IConverter<CsvCategory, Category>>(),
+													  new FilterAdapter<Category>(true));
 		}
 	}
 }
