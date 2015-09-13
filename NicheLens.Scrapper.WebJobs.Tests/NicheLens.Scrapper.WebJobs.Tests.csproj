@@ -38,19 +38,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ab">
-      <HintPath>..\packages\Ab.0.1.13\lib\net45\Ab.dll</HintPath>
+      <HintPath>..\packages\Ab.0.1.16\lib\net45\Ab.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Amazon">
-      <HintPath>..\packages\Ab.Amazon.0.1.12\lib\net45\Ab.Amazon.dll</HintPath>
+      <HintPath>..\packages\Ab.Amazon.0.1.14\lib\net45\Ab.Amazon.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.Amazon.Azure">
-      <HintPath>..\packages\Ab.Amazon.Azure.0.1.15\lib\net45\Ab.Amazon.Azure.dll</HintPath>
+      <HintPath>..\packages\Ab.Amazon.Azure.0.1.17\lib\net45\Ab.Amazon.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ab.Azure, Version=0.1.25.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ab.Azure.0.1.25\lib\net45\Ab.Azure.dll</HintPath>
+    <Reference Include="Ab.Azure">
+      <HintPath>..\packages\Ab.Azure.0.1.26\lib\net45\Ab.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AutoMapper, Version=4.0.4.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
@@ -145,12 +145,16 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ploeh.AutoFixture, Version=3.33.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoFixture.3.33.0\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+    <Reference Include="Ploeh.AutoFixture, Version=3.34.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoFixture.3.34.0\lib\net40\Ploeh.AutoFixture.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ploeh.AutoFixture.AutoMoq, Version=3.33.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoFixture.AutoMoq.3.33.0\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
+    <Reference Include="Ploeh.AutoFixture.AutoMoq, Version=3.34.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoFixture.AutoMoq.3.34.0\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.Xunit2, Version=3.34.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoFixture.Xunit2.3.34.0\lib\net45\Ploeh.AutoFixture.Xunit2.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector, Version=3.0.5.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">

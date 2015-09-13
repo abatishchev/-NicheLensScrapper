@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ab">
-      <HintPath>..\packages\Ab.0.1.13\lib\net45\Ab.dll</HintPath>
+      <HintPath>..\packages\Ab.0.1.16\lib\net45\Ab.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Azure.AppService, Version=0.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

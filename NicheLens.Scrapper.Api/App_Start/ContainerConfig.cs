@@ -124,7 +124,6 @@ namespace NicheLens.Scrapper.Api
 			#region Http
 			container.Register<HttpClient>(() => HttpClientFactory.Create());
 			container.Register<IHttpClient, HttpClientAdapter>();
-			container.RegisterDecorator<IHttpClient, ThrottlingHttpClient>();
 			#endregion
 
 			#region Azure

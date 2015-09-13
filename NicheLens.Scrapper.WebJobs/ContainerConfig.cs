@@ -137,14 +137,13 @@ namespace NicheLens.Scrapper.WebJobs
 			container.RegisterInitializer((TaskSchedulerSettings s) =>
 				{
 					var options = Task.Run(async () => await container.GetInstance<IOptionsProvider<AwsOptions[]>>().GetOptions()).Result;
-					s.RequestDelay = TimeSpan.FromMilliseconds(1000.0 / options.Length);
+					s.RequestDelay = TimeSpan.FromMilliseconds(options.Max(o => o.RequestDelay.TotalMilliseconds) / options.Length);
 				});
 			#endregion
 
 			#region Http
 			container.Register<HttpClient>(() => HttpClientFactory.Create());
 			container.Register<IHttpClient, HttpClientAdapter>();
-			container.RegisterDecorator<IHttpClient, ThrottlingHttpClient>();
 			#endregion
 
 			#region Azure
