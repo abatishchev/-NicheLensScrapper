@@ -56,11 +56,14 @@ namespace NicheLens.Scrapper.WebJobs
 												.ToArray();
 				log.WriteLine("Parsed {0} categories", categories.Length);
 
-				await _azureCategoryProvider.SaveCategories(categories);
-				log.WriteLine("Saved {0} categories", categories.Length);
+				Parallel.ForEach(categories, async c =>
+				{
+					await _azureCategoryProvider.SaveCategory(c);
+					log.WriteLine("Saved category {0} (id={1})", c.Name, c.NodeId);
 
-				await _azureCategoryProvider.EnqueueCategories(categories);
-				log.WriteLine("Enqueued {0} categories", categories.Length);
+					await _azureCategoryProvider.EnqueueCategory(c);
+					log.WriteLine("Enqueued category {0} (id={1})", c.Name, c.NodeId);
+				});
 
 				await blob.DeleteAsync(cancellationToken);
 				log.WriteLine("Blob {0} deleted", blobName);

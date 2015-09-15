@@ -147,7 +147,7 @@ namespace NicheLens.Scrapper.Api
 						.AddCollection("Categories", "88AvAL3WZgA=", 250)
 						.AddCollection("Products", "88AvAI2XrgA=", 250);
 			});
-			container.RegisterSingleton<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
+			container.RegisterSingleton<IPartitionResolverProvider, PartitionResolverProvider>();
 			container.RegisterFactory<DocumentClient, DocumentClientFactory>();
 			container.Register<IDocumentDbClient, ReliableDocumentDbClient>();
 

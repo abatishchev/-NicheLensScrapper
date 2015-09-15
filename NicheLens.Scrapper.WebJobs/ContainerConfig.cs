@@ -18,6 +18,7 @@ using Ab.Amazon.Web;
 using Ab.Azure;
 using Ab.Azure.Configuration;
 using Ab.Configuration;
+using Ab.Factory;
 using Ab.Filtering;
 using Ab.Pipeline;
 using Ab.SimpleInjector;
@@ -167,7 +168,7 @@ namespace NicheLens.Scrapper.WebJobs
 						.AddCollection("Categories", "88AvAL3WZgA=", 250)
 						.AddCollection("Products", "88AvAI2XrgA=", 250);
 			});
-			container.RegisterSingleton<IPartitionResolverProvider, CategoryPartitionResolverProvider>();
+            container.RegisterSingleton<IPartitionResolverProvider, PartitionResolverProvider>();
 			container.RegisterFactory<DocumentClient, DocumentClientFactory>();
 			container.Register<IDocumentDbClient, ReliableDocumentDbClient>();
 
