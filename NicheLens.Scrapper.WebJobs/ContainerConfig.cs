@@ -105,10 +105,6 @@ namespace NicheLens.Scrapper.WebJobs
 			container.Register(() => new Microsoft.ApplicationInsights.TelemetryClient());
 			#endregion
 
-			#region Raygun
-			container.Register(() => new Mindscape.Raygun4Net.RaygunClient(container.GetInstance<Ab.Configuration.IConfigurationProvider>().GetValue("raygun:ApiKey")));
-			#endregion
-
 			#region CSV
 			container.RegisterSingleton<CsvFactory>();
 			container.RegisterFactory<ICsvReader, TextReader, CsvReaderFactory>();
