@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Reactive.Concurrency;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 using Ab;
@@ -18,7 +15,6 @@ using Ab.Amazon.Web;
 using Ab.Azure;
 using Ab.Azure.Configuration;
 using Ab.Configuration;
-using Ab.Factory;
 using Ab.Filtering;
 using Ab.Pipeline;
 using Ab.SimpleInjector;
@@ -132,14 +128,10 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 
 			#region Scheduler
+			container.RegisterFactory<TaskSchedulerSettings, TaskSchedulerSettingsFactory>(Lifestyle.Singleton);
 			container.RegisterFactory<ITaskScheduler, TaskSchedulerSettings, DelayTaskSchedulerFactory>(Lifestyle.Singleton);
 			container.RegisterSingleton<IScheduler>(Scheduler.Default);
 			container.RegisterSingleton<ITaskScheduler, DelayTaskScheduler>();
-			container.RegisterInitializer((TaskSchedulerSettings s) =>
-				{
-					var options = Task.Run(async () => await container.GetInstance<IOptionsProvider<AwsOptions[]>>().GetOptions()).Result;
-					s.RequestDelay = TimeSpan.FromMilliseconds(options.Max(o => o.RequestDelay.TotalMilliseconds) / options.Length);
-				});
 			#endregion
 
 			#region Http
@@ -168,7 +160,7 @@ namespace NicheLens.Scrapper.WebJobs
 						.AddCollection("Categories", "88AvAL3WZgA=", 250)
 						.AddCollection("Products", "88AvAI2XrgA=", 250);
 			});
-            container.RegisterSingleton<IPartitionResolverProvider, PartitionResolverProvider>();
+			container.RegisterSingleton<IPartitionResolverProvider, PartitionResolverProvider>();
 			container.RegisterFactory<DocumentClient, DocumentClientFactory>();
 			container.Register<IDocumentDbClient, ReliableDocumentDbClient>();
 
@@ -184,6 +176,7 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 
 			#region Amazon
+			container.Register<ITagGenerator, RandomTagGenerator>();
 			container.Register<IArgumentBuilder, AwsArgumentBuilder>();
 			container.Register<IPipeline<string>, PercentUrlEncodingPipeline>();
 			container.Register<IUrlEncoder, PercentUrlEncoder>();
