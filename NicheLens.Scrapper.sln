@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.WebJobs.
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "NicheLens.Scrapper.Data.Scheme", "NicheLens.Scrapper.Data.Scheme\NicheLens.Scrapper.Data.Scheme.sqlproj", "{B7932548-2AAA-422F-8047-2AC4255D1429}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.Data", "NicheLens.Scrapper.Data\NicheLens.Scrapper.Data.csproj", "{9A2AF737-E2E2-471A-9652-4F31F35E637E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,11 +54,15 @@ Global
 		{B7932548-2AAA-422F-8047-2AC4255D1429}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7932548-2AAA-422F-8047-2AC4255D1429}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7932548-2AAA-422F-8047-2AC4255D1429}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9A2AF737-E2E2-471A-9652-4F31F35E637E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A2AF737-E2E2-471A-9652-4F31F35E637E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A2AF737-E2E2-471A-9652-4F31F35E637E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A2AF737-E2E2-471A-9652-4F31F35E637E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
 	EndGlobalSection
 EndGlobal
