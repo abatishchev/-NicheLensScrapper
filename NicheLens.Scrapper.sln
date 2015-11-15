@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.WebJobs"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.WebJobs.Tests", "NicheLens.Scrapper.WebJobs.Tests\NicheLens.Scrapper.WebJobs.Tests.csproj", "{6DA9DE86-E6F9-4081-B556-FC1159B6A7A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.Data.Management", "NicheLens.Scrapper.Data.Management\NicheLens.Scrapper.Data.Management.csproj", "{CDAA854A-1FD5-4176-BB07-70E487BC4FFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{6DA9DE86-E6F9-4081-B556-FC1159B6A7A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DA9DE86-E6F9-4081-B556-FC1159B6A7A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA9DE86-E6F9-4081-B556-FC1159B6A7A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDAA854A-1FD5-4176-BB07-70E487BC4FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDAA854A-1FD5-4176-BB07-70E487BC4FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDAA854A-1FD5-4176-BB07-70E487BC4FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDAA854A-1FD5-4176-BB07-70E487BC4FFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
