@@ -13,6 +13,8 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 
 		public T CreateInstance<T>()
 		{
+			_container.BeginLifetimeScope();
+
 			return (T)_container.GetInstance(typeof(T));
 		}
 	}

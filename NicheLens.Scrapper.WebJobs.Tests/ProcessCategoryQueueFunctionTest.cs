@@ -10,8 +10,13 @@ using Ab.Amazon.Data;
 using FluentAssertions;
 using Moq;
 
+using NicheLens.Scrapper.Data;
+
 using Ploeh.AutoFixture;
 using Xunit;
+
+using AmazonProduct = Ab.Amazon.Data.Product;
+using ModelProduct = NicheLens.Scrapper.Data.Models.Product;
 
 namespace NicheLens.Scrapper.WebJobs.Tests
 {
@@ -26,16 +31,16 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 
 			var categoryProvider = new Mock<IAwsCategoryProvider>();
 
-			var productProvider = new Mock<IAzureProductProvider>();
+			var productRepository = new Mock<IProductRepository>();
 
-			var functions = CreateFunctions(categoryProvider.Object, productProvider.Object);
+			var functions = CreateFunctions(categoryProvider.Object, productRepository: productRepository.Object);
 
 			// Act
 			await functions.ProcessCategoryQueue(category, TextWriter.Null, CancellationToken.None);
 
 			// Assert
 			categoryProvider.VerifyAll();
-			productProvider.VerifyAll();
+			productRepository.VerifyAll();
 		}
 
 		[Fact]
@@ -63,12 +68,14 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 		}
 
 		private static ProcessCategoryQueueFunction CreateFunctions(IAwsCategoryProvider awsCategoryProvider = null,
-																	IAzureProductProvider azureProductProvider = null,
+																	IConverter<AmazonProduct, ModelProduct> productConverter = null,
+																	IProductRepository productRepository = null,
 																	ILogger logger = null)
 		{
 			return new ProcessCategoryQueueFunction(logger ?? Mock.Of<ILogger>(),
 													awsCategoryProvider ?? Mock.Of<IAwsCategoryProvider>(),
-													azureProductProvider ?? Mock.Of<IAzureProductProvider>());
+													productConverter ?? Mock.Of<IConverter<AmazonProduct, ModelProduct>>(),
+													productRepository ?? Mock.Of<IProductRepository>());
 		}
 	}
 }

@@ -35,6 +35,7 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
 
 using NicheLens.Scrapper.Api.Client;
+using NicheLens.Scrapper.Data;
 using NicheLens.Scrapper.WebJobs.Configuration;
 using NicheLens.Scrapper.WebJobs.Data;
 
@@ -164,7 +165,6 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.Register<IConverter<Category, string>, JsonCategoryConverter>();
 			container.Register<IConverter<Category, CategoryDocument>, MappingCategoryDocumentConverter>();
-			container.Register<IAzureProductProvider, AzureProductProvider>();
 
 			container.Register<IConverter<string, Product>, JsonProductConverter>();
 			container.Register<IConverter<Product, ProductDocument>, MappingProductDocumentConverter>();
@@ -192,6 +192,12 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.Register<IAwsCategoryProvider, AwsCategoryProvider>();
 			#endregion
+
+			#region Data
+			container.RegisterLifetimeScope<IModelContext, ModelContext>();
+			container.Register<IConverter<Product, Scrapper.Data.Models.Product>, Scrapper.Data.Models.MappingProductConverter>();
+			container.Register<IProductRepository, SqlProductRepository>();
+			#endregion
 		}
 
 		private static void RegisterMapping(Container container)
@@ -205,6 +211,7 @@ namespace NicheLens.Scrapper.WebJobs
 				configuration.AddProfile<CsvCategoryMappingProfile>();
 				configuration.AddProfile<CategoryDocumentMappingProfile>();
 				configuration.AddProfile<ProductDocumentMappingProfile>();
+				configuration.AddProfile<Scrapper.Data.Models.ProductMappingProfile>();
 			});
 		}
 	}
