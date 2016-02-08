@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Reactive.Concurrency;
 using System.Reflection;
@@ -20,11 +20,11 @@ using Ab.Web;
 using Ab.WebApi.AppInsights;
 
 using AutoMapper;
-using AutoMapper.Mappers;
 
 using Elmah;
 using Elmah.AzureTableStorage;
 
+using FluentValidation;
 using FluentValidation.Attributes;
 using FluentValidation.WebApi;
 
@@ -43,7 +43,6 @@ namespace NicheLens.Scrapper.Api
 			container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
 
 			RegisterTypes(container);
-			RegisterMapping(container);
 
 			return container;
 		}
@@ -70,7 +69,10 @@ namespace NicheLens.Scrapper.Api
 				});
 
 			// Handlers
-			container.RegisterCollection<DelegatingHandler>(Enumerable.Empty<DelegatingHandler>());
+			container.RegisterCollection<DelegatingHandler>(
+				new Type[]
+				{
+				});
 
 			// Services
 			container.RegisterCollection<System.Web.Http.ExceptionHandling.IExceptionLogger>(
@@ -100,18 +102,12 @@ namespace NicheLens.Scrapper.Api
 			#endregion
 
 			#region AutoMapper
-			container.RegisterSingleton<ITypeMapFactory, TypeMapFactory>();
-			container.RegisterCollection<IObjectMapper>(MapperRegistry.Mappers);
-
-			container.RegisterSingleton<ConfigurationStore>();
-			container.Register<IConfiguration>(container.GetInstance<ConfigurationStore>);
-			container.RegisterSingleton<AutoMapper.IConfigurationProvider>(container.GetInstance<ConfigurationStore>);
-
-			container.RegisterSingleton<IMappingEngine>(() => new MappingEngine(container.GetInstance<AutoMapper.IConfigurationProvider>()));
+			container.RegisterSingleton(new MapperConfiguration(c => CreateMapperConfiguration(c, container)));
+			container.RegisterSingleton(() => container.GetInstance<MapperConfiguration>().CreateMapper());
 			#endregion
 
 			#region Fluent Validation
-			container.Register<FluentValidation.IValidatorFactory, AttributedValidatorFactory>();
+			container.Register<IValidatorFactory>(() => new AttributedValidatorFactory(t => (IValidator)container.GetInstance(t)));
 			container.Register<ModelValidatorProvider, FluentValidationModelValidatorProvider>();
 			#endregion
 
@@ -166,16 +162,11 @@ namespace NicheLens.Scrapper.Api
 			#endregion
 		}
 
-		private static void RegisterMapping(Container container)
+		private static void CreateMapperConfiguration(IMapperConfiguration config, Container container)
 		{
-			var configuration = container.GetInstance<IConfiguration>();
+			config.ConstructServicesUsing(container.GetInstance);
 
-			Mapper.Initialize(_ =>
-			{
-				configuration.ConstructServicesUsing(container.GetInstance);
-
-				configuration.AddProfile<CategoryDocumentMappingProfile>();
-			});
+			config.AddProfile<CategoryDocumentMappingProfile>();
 		}
 	}
 }

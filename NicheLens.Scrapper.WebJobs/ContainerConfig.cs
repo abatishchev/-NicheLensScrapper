@@ -22,7 +22,6 @@ using Ab.Threading;
 using Ab.Web;
 
 using AutoMapper;
-using AutoMapper.Mappers;
 
 using CsvHelper;
 
@@ -49,7 +48,6 @@ namespace NicheLens.Scrapper.WebJobs
 			Container container = new Container();
 
 			RegisterTypes(container);
-			RegisterMapping(container);
 
 			return container;
 		}
@@ -113,14 +111,8 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 
 			#region AutoMapper
-			container.RegisterSingleton<ITypeMapFactory, TypeMapFactory>();
-			container.RegisterCollection<IObjectMapper>(MapperRegistry.Mappers);
-
-			container.RegisterSingleton<ConfigurationStore>();
-			container.Register<IConfiguration>(container.GetInstance<ConfigurationStore>);
-			container.RegisterSingleton<AutoMapper.IConfigurationProvider>(container.GetInstance<ConfigurationStore>);
-
-			container.RegisterSingleton<IMappingEngine>(() => new MappingEngine(container.GetInstance<AutoMapper.IConfigurationProvider>()));
+			container.RegisterSingleton(new MapperConfiguration(c => CreateMapperConfiguration(c, container)));
+			container.RegisterSingleton(() => container.GetInstance<MapperConfiguration>().CreateMapper());
 			#endregion
 
 			#region Scheduler
@@ -182,7 +174,7 @@ namespace NicheLens.Scrapper.WebJobs
 			container.Register<IUrlBuilder, AwsUrlBuilder>();
 
 			container.RegisterFactory<IItemResponse, string, XmlItemResponseFactory>();
-			container.Register<IPipeline<Product, XElement, SearchCriteria>, ResponseGroupProductPipeline>();
+			container.Register<IPipeline<Product, XElement, SearchCriteria>, ResponseGroupProductPipeline>(Lifestyle.Singleton);
 			container.RegisterFactory<Product, XElement, SearchCriteria, XmlProductFactory>();
 			container.Register<IFilter<XElement>, PrimaryVariantlItemFilter>();
 
@@ -194,18 +186,13 @@ namespace NicheLens.Scrapper.WebJobs
 			#endregion
 		}
 
-		private static void RegisterMapping(Container container)
+		private static void CreateMapperConfiguration(IMapperConfiguration config, Container container)
 		{
-			var configuration = container.GetInstance<IConfiguration>();
+			config.ConstructServicesUsing(container.GetInstance);
 
-			Mapper.Initialize(_ =>
-			{
-				configuration.ConstructServicesUsing(container.GetInstance);
-
-				configuration.AddProfile<CsvCategoryMappingProfile>();
-				configuration.AddProfile<CategoryDocumentMappingProfile>();
-				configuration.AddProfile<ProductDocumentMappingProfile>();
-			});
+			config.AddProfile<CsvCategoryMappingProfile>();
+			config.AddProfile<CategoryDocumentMappingProfile>();
+			config.AddProfile<ProductDocumentMappingProfile>();
 		}
 	}
 }
