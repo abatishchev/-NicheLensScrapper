@@ -7,9 +7,9 @@ namespace NicheLens.Scrapper.Data.Models
 {
 	public class MappingProductConverter : IConverter<AmazonProduct, Product>
 	{
-		private readonly IMappingEngine _mapper;
+		private readonly IMapper _mapper;
 
-		public MappingProductConverter(IMappingEngine mapper)
+		public MappingProductConverter(IMapper mapper)
 		{
 			_mapper = mapper;
 		}
