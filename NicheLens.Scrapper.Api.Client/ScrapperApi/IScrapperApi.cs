@@ -26,12 +26,7 @@ namespace NicheLens.Scrapper.Api.Client
             get; set; 
         }
         
-        IParser Parser
-        {
-            get; 
-        }
-        
-        IScrapperOperations Scrapper
+        IInfo Info
         {
             get; 
         }

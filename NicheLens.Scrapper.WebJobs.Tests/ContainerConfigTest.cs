@@ -18,14 +18,15 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 		}
 
 		[Fact]
-		public void Mapper_AssertConfigurationIsValid_Should_Not_Throw_Exception()
+		public void MapperConfiguration_AssertConfigurationIsValid_Should_Not_Throw_Exception()
 		{
 			// Arrange
 			var container = ContainerConfig.CreateContainer();
+			var config = container.GetInstance<MapperConfiguration>();
 
 			// Act
 			// Assert
-			Mapper.AssertConfigurationIsValid();
+			config.AssertConfigurationIsValid();
 		}
 	}
 }

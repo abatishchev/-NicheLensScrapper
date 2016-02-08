@@ -1,5 +1,5 @@
 ﻿using System.Web.Http;
-
+using AutoMapper;
 using FluentAssertions;
 
 using SimpleInjector;
@@ -33,6 +33,18 @@ namespace NicheLens.Scrapper.Api.Tests
 
 			// Act
 			lifestyle.Should().BeOfType<WebApiRequestLifestyle>();
+		}
+
+		[Fact]
+		public void MapperConfiguration_AssertConfigurationIsValid_Should_Not_Throw_Exception()
+		{
+			// Arrange
+			var container = ContainerConfig.CreateContainer();
+			var config = container.GetInstance<MapperConfiguration>();
+
+			// Act
+			// Assert
+			config.AssertConfigurationIsValid();
 		}
 	}
 }
