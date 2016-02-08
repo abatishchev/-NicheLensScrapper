@@ -117,11 +117,8 @@ namespace NicheLens.Scrapper.Api.Client
             string responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (statusCode != HttpStatusCode.OK)
             {
-                HttpOperationException ex = new HttpOperationException();
-                ex.Request = httpRequest;
-                ex.Response = httpResponse;
-	            ex.Body = responseContent;
-                if (shouldTrace)
+	            HttpOperationException ex = new HttpOperationException { Body = responseContent };
+	            if (shouldTrace)
                 {
                     ServiceClientTracing.Error(invocationId, ex);
                 }

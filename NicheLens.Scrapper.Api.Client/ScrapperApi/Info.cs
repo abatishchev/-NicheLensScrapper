@@ -14,15 +14,15 @@ using NicheLens.Scrapper.Api.Client;
 
 namespace NicheLens.Scrapper.Api.Client
 {
-    internal partial class ScrapperOperations : IServiceOperations<ScrapperApi>, IScrapperOperations
+    internal partial class Info : IServiceOperations<ScrapperApi>, IInfo
     {
         /// <summary>
-        /// Initializes a new instance of the ScrapperOperations class.
+        /// Initializes a new instance of the Info class.
         /// </summary>
         /// <param name='client'>
         /// Reference to the service client.
         /// </param>
-        internal ScrapperOperations(ScrapperApi client)
+        internal Info(ScrapperApi client)
         {
             this._client = client;
         }
@@ -40,7 +40,7 @@ namespace NicheLens.Scrapper.Api.Client
         /// <param name='cancellationToken'>
         /// Cancellation token.
         /// </param>
-        public async Task<HttpOperationResponse<string>> GetWithOperationResponseAsync(CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public async Task<HttpOperationResponse<string>> GetEnvironmentWithOperationResponseAsync(CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             // Tracing
             bool shouldTrace = ServiceClientTracing.IsEnabled;
@@ -49,12 +49,107 @@ namespace NicheLens.Scrapper.Api.Client
             {
                 invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                ServiceClientTracing.Enter(invocationId, this, "GetAsync", tracingParameters);
+                ServiceClientTracing.Enter(invocationId, this, "GetEnvironmentAsync", tracingParameters);
             }
             
             // Construct URL
             string url = "";
-            url = url + "/api/scrapper/start";
+            url = url + "/api/info/environment";
+            string baseUrl = this.Client.BaseUri.AbsoluteUri;
+            // Trim '/' character from the end of baseUrl and beginning of url.
+            if (baseUrl[baseUrl.Length - 1] == '/')
+            {
+                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
+            }
+            if (url[0] == '/')
+            {
+                url = url.Substring(1);
+            }
+            url = baseUrl + "/" + url;
+            url = url.Replace(" ", "%20");
+            
+            // Create HTTP transport objects
+            HttpRequestMessage httpRequest = new HttpRequestMessage();
+            httpRequest.Method = HttpMethod.Get;
+            httpRequest.RequestUri = new Uri(url);
+            
+            // Set Credentials
+            if (this.Client.Credentials != null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await this.Client.Credentials.ProcessHttpRequestAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            }
+            
+            // Send Request
+            if (shouldTrace)
+            {
+                ServiceClientTracing.SendRequest(invocationId, httpRequest);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            HttpResponseMessage httpResponse = await this.Client.HttpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            if (shouldTrace)
+            {
+                ServiceClientTracing.ReceiveResponse(invocationId, httpResponse);
+            }
+            HttpStatusCode statusCode = httpResponse.StatusCode;
+            cancellationToken.ThrowIfCancellationRequested();
+            string responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (statusCode != HttpStatusCode.OK)
+            {
+	            HttpOperationException ex = new HttpOperationException();
+                if (shouldTrace)
+                {
+                    ServiceClientTracing.Error(invocationId, ex);
+                }
+                throw ex;
+            }
+            
+            // Create Result
+            HttpOperationResponse<string> result = new HttpOperationResponse<string>();
+            result.Request = httpRequest;
+            result.Response = httpResponse;
+            
+            // Deserialize Response
+            if (statusCode == HttpStatusCode.OK)
+            {
+                string resultModel = default(string);
+                JToken responseDoc = null;
+                if (string.IsNullOrEmpty(responseContent) == false)
+                {
+                    responseDoc = JToken.Parse(responseContent);
+                }
+                if (responseDoc != null)
+                {
+                    resultModel = responseDoc.ToString(Newtonsoft.Json.Formatting.Indented);
+                }
+                result.Body = resultModel;
+            }
+            
+            if (shouldTrace)
+            {
+                ServiceClientTracing.Exit(invocationId, result);
+            }
+            return result;
+        }
+        
+        /// <param name='cancellationToken'>
+        /// Cancellation token.
+        /// </param>
+        public async Task<HttpOperationResponse<string>> GetVersionWithOperationResponseAsync(CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            // Tracing
+            bool shouldTrace = ServiceClientTracing.IsEnabled;
+            string invocationId = null;
+            if (shouldTrace)
+            {
+                invocationId = ServiceClientTracing.NextInvocationId.ToString();
+                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
+                ServiceClientTracing.Enter(invocationId, this, "GetVersionAsync", tracingParameters);
+            }
+            
+            // Construct URL
+            string url = "";
+            url = url + "/api/info/version";
             string baseUrl = this.Client.BaseUri.AbsoluteUri;
             // Trim '/' character from the end of baseUrl and beginning of url.
             if (baseUrl[baseUrl.Length - 1] == '/')

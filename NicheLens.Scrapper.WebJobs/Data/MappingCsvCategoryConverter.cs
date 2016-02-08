@@ -9,9 +9,9 @@ namespace NicheLens.Scrapper.WebJobs.Data
 {
 	public sealed class MappingCsvCategoryConverter : IConverter<CsvCategory, Category>
 	{
-		private readonly IMappingEngine _mapper;
+		private readonly IMapper _mapper;
 
-		public MappingCsvCategoryConverter(IMappingEngine mapper)
+		public MappingCsvCategoryConverter(IMapper mapper)
 		{
 			_mapper = mapper;
 		}

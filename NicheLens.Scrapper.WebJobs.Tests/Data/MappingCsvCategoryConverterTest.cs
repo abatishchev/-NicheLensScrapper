@@ -18,7 +18,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests.Data
 			// Arrange
 			var container = ContainerConfig.CreateContainer();
 
-			var mapper = container.GetInstance<IMappingEngine>();
+			var mapper = container.GetInstance<IMapper>();
 
 			var converter = new MappingCsvCategoryConverter(mapper);
 			var csvCategy = new Fixture().Create<CsvCategory>();
