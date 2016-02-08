@@ -20,7 +20,7 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 
 		public JobHost Create()
 		{
-			var configuration = new JobHostConfiguration
+			var config = new JobHostConfiguration
 			{
 				JobActivator = _activator,
 				NameResolver = _nameResolver,
@@ -33,7 +33,11 @@ namespace NicheLens.Scrapper.WebJobs.Configuration
 					BatchSize = _options.BatchSize
 				}
 			};
-			return new JobHost(configuration);
+
+			if (config.IsDevelopment)
+				config.UseDevelopmentSettings();
+
+			return new JobHost(config);
 		}
 	}
 }
