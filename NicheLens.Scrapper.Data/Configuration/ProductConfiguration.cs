@@ -9,7 +9,7 @@ namespace NicheLens.Scrapper.Data.Configuration
 	{
 		public ProductConfiguration()
 		{
-			ToTable("Products").HasKey(x => x.ProductId);
+			ToTable("Product").HasKey(x => x.ProductId);
 
 			Property(x => x.ProductId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 		}

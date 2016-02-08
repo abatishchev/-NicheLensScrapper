@@ -80,11 +80,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Schemas\dbo\Tables\Products.sql" />
-    <Build Include="Schemas\dbo\Tables\Keys\Primary\PK_Products.sql" />
-    <Build Include="Schemas\dbo\Tables\Indexes\IX_Products_Asin.sql" />
-    <Build Include="Schemas\dbo\Tables\Constraints\Default\DF_Products_ProductId.sql" />
-    <Build Include="Schemas\dbo\Tables\Constraints\Unique\UX_Products_Asin.sql" />
+    <Build Include="Schemas\dbo\Tables\Product.sql" />
+    <Build Include="Schemas\dbo\Tables\Keys\Primary\PK_Product.sql" />
+    <Build Include="Schemas\dbo\Tables\Constraints\Default\DF_Product_ProductId.sql" />
+    <Build Include="Schemas\dbo\Tables\Constraints\Unique\UX_Product_Asin.sql" />
+    <Build Include="Schemas\dbo\Tables\Category.sql" />
+    <Build Include="Schemas\dbo\Tables\Constraints\Default\DF_Category_CategoryId.sql" />
+    <Build Include="Schemas\dbo\Tables\Keys\Primary\PK_Category.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Prod.publish.xml" />

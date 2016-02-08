@@ -35,10 +35,14 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 using NicheLens.Scrapper.Api.Client;
 using NicheLens.Scrapper.Data;
+using NicheLens.Scrapper.Data.Models;
 using NicheLens.Scrapper.WebJobs.Configuration;
 using NicheLens.Scrapper.WebJobs.Data;
 
 using SimpleInjector;
+
+using Category = Ab.Amazon.Data.Category;
+using Product = Ab.Amazon.Data.Product;
 
 namespace NicheLens.Scrapper.WebJobs
 {
@@ -196,10 +200,13 @@ namespace NicheLens.Scrapper.WebJobs
 		{
 			config.ConstructServicesUsing(container.GetInstance);
 
-			config.AddProfile<CsvCategoryMappingProfile>();
 			config.AddProfile<CategoryDocumentMappingProfile>();
 			config.AddProfile<ProductDocumentMappingProfile>();
-			config.AddProfile<Scrapper.Data.Models.ProductMappingProfile>();
+
+			config.AddProfile<CsvCategoryMappingProfile>();
+
+			config.AddProfile<ProductMappingProfile>();
+			config.AddProfile<CategoryMappingProfile>();
 		}
 	}
 }

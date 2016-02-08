@@ -6,7 +6,9 @@ namespace NicheLens.Scrapper.Data.Models
 	{
 		protected override void Configure()
 		{
-			CreateMap<Ab.Amazon.Data.Product, Product>(); //.ForMember(d => d.CustomerReviewsUrl, o => o.MapFrom(x => x.CustomerReviewsUrl.ToString()));
+			CreateMap<Ab.Amazon.Data.Product, Product>()
+				//.ForMember(d => d.CustomerReviewsUrl, o => o.MapFrom(x => x.CustomerReviewsUrl.ToString()))
+				.ReverseMap();
 		}
 	}
 }

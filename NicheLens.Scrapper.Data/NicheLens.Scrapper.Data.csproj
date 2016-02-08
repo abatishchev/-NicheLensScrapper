@@ -61,10 +61,13 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\CategoryConfiguration.cs" />
     <Compile Include="Configuration\ProductConfiguration.cs" />
     <Compile Include="IModelContext.cs" />
     <Compile Include="IProductRepository.cs" />
     <Compile Include="ModelContext.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\CategoryMappingProfile.cs" />
     <Compile Include="Models\ProductMappingProfile.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
