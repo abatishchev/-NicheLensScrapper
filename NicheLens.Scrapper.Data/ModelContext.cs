@@ -1,12 +1,15 @@
 ﻿using System.Data.Entity;
 using System.Reflection;
 
+using Ab.Amazon.Data;
+
 namespace NicheLens.Scrapper.Data
 {
 	public class ModelContext : DbContext, IModelContext
 	{
 		static ModelContext()
 		{
+			Database.SetInitializer<ModelContext>(null);
 		}
 
 		public ModelContext(Ab.Configuration.IConfigurationProvider configurationProvider)
@@ -21,6 +24,8 @@ namespace NicheLens.Scrapper.Data
 			modelBuilder.Configurations.AddFromAssembly(Assembly.GetExecutingAssembly());
 		}
 
-		public DbSet<Models.Product> Products { get; set; }
+		public DbSet<CategoryEntity> Categories { get; set; }
+
+		public DbSet<ProductEntity> Products { get; set; }
 	}
 }

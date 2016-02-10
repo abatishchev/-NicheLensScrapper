@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 
-using NicheLens.Scrapper.Data.Models;
+using Ab.Amazon.Data;
 
 namespace NicheLens.Scrapper.Data.Configuration
 {
-	public class ProductConfiguration : EntityTypeConfiguration<Product>
+	public class ProductConfiguration : EntityTypeConfiguration<ProductEntity>
 	{
 		public ProductConfiguration()
 		{

@@ -68,6 +68,7 @@
     <Folder Include="Schemas\dbo\Tables\Constraints" />
     <Folder Include="Schemas\dbo\Tables\Constraints\Default" />
     <Folder Include="Schemas\dbo\Tables\Constraints\Unique" />
+    <Folder Include="Schemas\dbo\Tables\Keys\Foreign" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -87,6 +88,7 @@
     <Build Include="Schemas\dbo\Tables\Category.sql" />
     <Build Include="Schemas\dbo\Tables\Constraints\Default\DF_Category_CategoryId.sql" />
     <Build Include="Schemas\dbo\Tables\Keys\Primary\PK_Category.sql" />
+    <Build Include="Schemas\dbo\Tables\Keys\Foreign\FK_Product_CategoryId_Category.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Prod.publish.xml" />

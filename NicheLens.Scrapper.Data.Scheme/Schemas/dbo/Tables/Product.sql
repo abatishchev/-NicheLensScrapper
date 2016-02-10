@@ -10,5 +10,7 @@
 	LargeImageUrl VarChar(255) not null,
 	LowestNewPrice int NULL,
 	DetailsPageUrl VarChar(255) not null,
-	CustomerReviewsUrl VarChar(255) not null
+	CustomerReviewsUrl VarChar(255) not null,
+
+	CategoryId  UniqueIdentifier not null
 )

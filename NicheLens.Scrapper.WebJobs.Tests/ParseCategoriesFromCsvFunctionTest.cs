@@ -40,7 +40,7 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var e = categories.AsEnumerable().GetEnumerator();
 
 			var provider = new Mock<IAzureCategoryProvider>();
-			provider.Setup(p => p.SaveCategory(It.IsIn(categories))).Returns(Task.CompletedTask);
+			provider.Setup(p => p.SaveCategories(categories)).Returns(Task.CompletedTask);
 			provider.Setup(p => p.EnqueueCategory(It.IsIn(categories))).Returns(Task.CompletedTask);
 
 			var csvReader = new Mock<ICsvReader>();

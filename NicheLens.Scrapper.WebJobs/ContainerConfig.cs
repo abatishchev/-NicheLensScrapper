@@ -184,14 +184,16 @@ namespace NicheLens.Scrapper.WebJobs
 
 			container.Register<IAwsClient, XmlAwsClient>();
 
+			container.RegisterSingleton<IConverter<Product, ProductEntity>, MappingConverter<Product, ProductEntity>>();
 			container.Register<IAwsProductProvider, AwsProductProvider>();
 
+			container.RegisterSingleton<IConverter<Category, CategoryEntity>, MappingConverter<Category, CategoryEntity>>();
 			container.Register<IAwsCategoryProvider, AwsCategoryProvider>();
 			#endregion
 
 			#region Data
 			container.RegisterLifetimeScope<IModelContext, ModelContext>();
-			container.Register<IConverter<Product, Scrapper.Data.Models.Product>, Scrapper.Data.Models.MappingProductConverter>();
+			container.Register<ICategoryRepository, SqlCategoryRepository>();
 			container.Register<IProductRepository, SqlProductRepository>();
 			#endregion
 		}
@@ -199,9 +201,6 @@ namespace NicheLens.Scrapper.WebJobs
 		private static void CreateMapperConfiguration(IMapperConfiguration config, Container container)
 		{
 			config.ConstructServicesUsing(container.GetInstance);
-
-			config.AddProfile<CategoryDocumentMappingProfile>();
-			config.AddProfile<ProductDocumentMappingProfile>();
 
 			config.AddProfile<CsvCategoryMappingProfile>();
 

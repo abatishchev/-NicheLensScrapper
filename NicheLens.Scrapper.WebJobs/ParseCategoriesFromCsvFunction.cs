@@ -38,11 +38,11 @@ namespace NicheLens.Scrapper.WebJobs
 			_categoryFilter = categoryFilter;
 		}
 
-		public async Task ParseCategoriesFromCsv([BlobTrigger("%azure:Queue:CategoriesCsv%")] ICloudBlob blob,
+		public async Task ParseCategoriesFromCsv([BlobTrigger("%azure:Blob:CategoriesCsv%")] ICloudBlob blob,
 												 TextWriter log,
 												 CancellationToken cancellationToken)
 		{
-			var blobName = HttpUtility.HtmlDecode(blob.Name);
+			var blobName = HttpUtility.UrlDecode(blob.Name);
 			log.WriteLine("Starting parsing {0}", blobName);
 
 			try
@@ -56,11 +56,11 @@ namespace NicheLens.Scrapper.WebJobs
 												.ToArray();
 				log.WriteLine("Parsed {0} categories", categories.Length);
 
+				await _azureCategoryProvider.SaveCategories(categories);
+				log.WriteLine("Saved {0} categories", categories.Length);
+
 				Parallel.ForEach(categories, async c =>
 				{
-					await _azureCategoryProvider.SaveCategory(c);
-					log.WriteLine("Saved category {0} (id={1})", c.Name, c.NodeId);
-
 					await _azureCategoryProvider.EnqueueCategory(c);
 					log.WriteLine("Enqueued category {0} (id={1})", c.Name, c.NodeId);
 				});

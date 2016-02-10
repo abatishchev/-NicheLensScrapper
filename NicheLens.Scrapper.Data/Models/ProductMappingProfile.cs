@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Ab.Amazon.Data;
+using AutoMapper;
 
 namespace NicheLens.Scrapper.Data.Models
 {
@@ -6,9 +7,12 @@ namespace NicheLens.Scrapper.Data.Models
 	{
 		protected override void Configure()
 		{
-			CreateMap<Ab.Amazon.Data.Product, Product>()
-				//.ForMember(d => d.CustomerReviewsUrl, o => o.MapFrom(x => x.CustomerReviewsUrl.ToString()))
-				.ReverseMap();
+			CreateMap<Product, ProductEntity>()
+				.ForMember(d => d.CustomerReviewsUrl, o => o.MapFrom(x => x.CustomerReviewsUrl.ToString()))
+				.ForMember(d => d.DetailsPageUrl, o => o.MapFrom(x => x.DetailsPageUrl.ToString()))
+				.ForMember(dest => dest.Category, opt => opt.Ignore())
+				.ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+			.ReverseMap();
 		}
 	}
 }

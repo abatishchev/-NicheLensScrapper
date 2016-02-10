@@ -8,10 +8,7 @@ using System.Web.Http.Filters;
 using System.Web.Http.Validation;
 
 using Ab;
-using Ab.Amazon;
 using Ab.Amazon.Data;
-using Ab.Azure;
-using Ab.Azure.Configuration;
 using Ab.Configuration;
 using Ab.Reflection;
 using Ab.SimpleInjector;
@@ -27,8 +24,6 @@ using Elmah.AzureTableStorage;
 using FluentValidation;
 using FluentValidation.Attributes;
 using FluentValidation.WebApi;
-
-using Microsoft.Azure.Documents.Client;
 
 using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
@@ -120,45 +115,6 @@ namespace NicheLens.Scrapper.Api
 			#region Http
 			container.Register<HttpClient>(() => HttpClientFactory.Create());
 			container.Register<IHttpClient, HttpClientAdapter>();
-			#endregion
-
-			#region Azure
-			container.RegisterFactory<AzureOptions, AzureOptionsFactory>(Lifestyle.Singleton);
-
-			container.Register<IAzureContainerClient, AzureContainerClient>();
-
-			container.Register<IBlobClient, AzureBlobClient>();
-			container.Register<ITableClient, AzureTableClient>();
-			container.Register<IQueueClient, AzureQueueClient>();
-
-			container.RegisterSingleton<IStringBuilder<string>, DatabaseLinkBuilder>();
-			container.RegisterSingleton<IStringBuilder<string, string>, CollectionLinkBuilder>();
-			container.RegisterSingleton<IStringBuilder<string, string, string>, DocumentLinkBuilder>();
-
-			container.RegisterFactory<DocumentDbOptions, DocumentDbOptionsFactory>(Lifestyle.Singleton);
-			container.RegisterInitializer((DocumentDbOptions opt) =>
-			{
-				(opt.DatabaseOptions = new DatabaseOptionsCollection(container.GetInstance))
-					.AddDatabase("Scrapper", "88AvAA==")
-						.AddCollection("Categories", "88AvAL3WZgA=", 250)
-						.AddCollection("Products", "88AvAI2XrgA=", 250);
-			});
-			container.RegisterSingleton<IPartitionResolverProvider, PartitionResolverProvider>();
-			container.RegisterFactory<DocumentClient, DocumentClientFactory>();
-			container.Register<IDocumentDbClient, ReliableDocumentDbClient>();
-
-			container.Register<IAzureClient, AzureClient>();
-
-			container.Register<IConverter<Category, string>, JsonCategoryConverter>();
-			container.Register<IConverter<Category, CategoryDocument>, MappingCategoryDocumentConverter>();
-			container.Register<IAzureProductProvider, AzureProductProvider>();
-
-			container.Register<IConverter<string, Product>, JsonProductConverter>();
-			container.Register<IConverter<Product, ProductDocument>, MappingProductDocumentConverter>();
-			container.Register<IAzureCategoryProvider, AzureCategoryProvider>();
-			#endregion
-
-			#region Amazon
 			#endregion
 		}
 

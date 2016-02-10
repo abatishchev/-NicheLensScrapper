@@ -10,13 +10,8 @@ using Ab.Amazon.Data;
 using FluentAssertions;
 using Moq;
 
-using NicheLens.Scrapper.Data;
-
 using Ploeh.AutoFixture;
 using Xunit;
-
-using AmazonProduct = Ab.Amazon.Data.Product;
-using ModelProduct = NicheLens.Scrapper.Data.Models.Product;
 
 namespace NicheLens.Scrapper.WebJobs.Tests
 {
@@ -29,18 +24,18 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var fixture = new Fixture();
 			var category = fixture.Create<Category>();
 
-			var categoryProvider = new Mock<IAwsCategoryProvider>();
+			var provider = new Mock<IAwsCategoryProvider>();
 
-			var productRepository = new Mock<IProductRepository>();
+			var repository = new Mock<IProductRepository>();
 
-			var functions = CreateFunctions(categoryProvider.Object, productRepository: productRepository.Object);
+			var functions = CreateFunctions(provider.Object, productRepository: repository.Object);
 
 			// Act
 			await functions.ProcessCategoryQueue(category, TextWriter.Null, CancellationToken.None);
 
 			// Assert
-			categoryProvider.VerifyAll();
-			productRepository.VerifyAll();
+			provider.VerifyAll();
+			repository.VerifyAll();
 		}
 
 		[Fact]
@@ -52,12 +47,12 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 			var logger = new Mock<ILogger>();
 			logger.Setup(l => l.LogException(exception));
 
-			var categoryProvider = new Mock<IAwsCategoryProvider>();
-			categoryProvider.Setup(p => p.GetProductsInCategory(It.IsAny<Category>())).Throws(exception);
+			var provider = new Mock<IAwsCategoryProvider>();
+			provider.Setup(p => p.GetProductsInCategory(It.IsAny<Category>())).Throws(exception);
 
 			var category = new Fixture().Create<Category>();
 
-			var functions = CreateFunctions(categoryProvider.Object, logger: logger.Object);
+			var functions = CreateFunctions(provider.Object, logger: logger.Object);
 
 			// Act
 			Func<Task> action = () => functions.ProcessCategoryQueue(category, TextWriter.Null, CancellationToken.None);
@@ -68,13 +63,13 @@ namespace NicheLens.Scrapper.WebJobs.Tests
 		}
 
 		private static ProcessCategoryQueueFunction CreateFunctions(IAwsCategoryProvider awsCategoryProvider = null,
-																	IConverter<AmazonProduct, ModelProduct> productConverter = null,
+																	IConverter<Product, ProductEntity> productConverter = null,
 																	IProductRepository productRepository = null,
 																	ILogger logger = null)
 		{
 			return new ProcessCategoryQueueFunction(logger ?? Mock.Of<ILogger>(),
 													awsCategoryProvider ?? Mock.Of<IAwsCategoryProvider>(),
-													productConverter ?? Mock.Of<IConverter<AmazonProduct, ModelProduct>>(),
+													productConverter ?? Mock.Of<IConverter<Product, ProductEntity>>(),
 													productRepository ?? Mock.Of<IProductRepository>());
 		}
 	}

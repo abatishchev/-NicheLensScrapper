@@ -9,29 +9,25 @@ using Ab.Amazon;
 using Ab.Amazon.Data;
 
 using Microsoft.Azure.WebJobs;
-using NicheLens.Scrapper.Data;
-
-using AmazonProduct = Ab.Amazon.Data.Product;
-using ModelProduct = NicheLens.Scrapper.Data.Models.Product;
 
 namespace NicheLens.Scrapper.WebJobs
 {
 	public class ProcessCategoryQueueFunction
 	{
 		private readonly ILogger _logger;
-		private readonly IAwsCategoryProvider _awsCategoryProvider;
-		private readonly IConverter<AmazonProduct, ModelProduct> _productConverter;
-		private readonly IProductRepository _productRepository;
+		private readonly IAwsCategoryProvider _provider;
+		private readonly IConverter<Product, ProductEntity> _converter;
+		private readonly IProductRepository _repository;
 
 		public ProcessCategoryQueueFunction(ILogger logger,
-											IAwsCategoryProvider awsCategoryProvider,
-											IConverter<AmazonProduct, ModelProduct> productConverter,
-											IProductRepository productRepository)
+											IAwsCategoryProvider provider,
+											IConverter<Product, ProductEntity> converter,
+											IProductRepository repository)
 		{
 			_logger = logger;
-			_awsCategoryProvider = awsCategoryProvider;
-			_productConverter = productConverter;
-			_productRepository = productRepository;
+			_provider = provider;
+			_converter = converter;
+			_repository = repository;
 		}
 
 		public async Task ProcessCategoryQueue([QueueTrigger("%azure:Queue:Categories%")] Category category,
@@ -42,13 +38,12 @@ namespace NicheLens.Scrapper.WebJobs
 
 			try
 			{
-				var awsProducts = await _awsCategoryProvider.GetProductsInCategory(category);
+				var products = await _provider.GetProductsInCategory(category);
 
-				log.WriteLine("Found {0} products", awsProducts.Length);
+				log.WriteLine("Found {0} products", products.Length);
 
-				var products = awsProducts.Select(_productConverter.Convert).ToArray();
-
-				await _productRepository.MergeProducts(products);
+				var entities = products.Select(_converter.Convert).ToArray();
+				await _repository.UpdateProducts(entities);
 			}
 			catch (Exception ex)
 			{

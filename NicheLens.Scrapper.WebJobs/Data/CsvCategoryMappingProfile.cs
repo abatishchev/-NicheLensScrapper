@@ -7,7 +7,9 @@ namespace NicheLens.Scrapper.WebJobs.Data
 	{
 		protected override void Configure()
 		{
-			CreateMap<CsvCategory, Category>().ForMember(d => d.Name, o => o.MapFrom(x => x.Title));
+			CreateMap<CsvCategory, Category>()
+				.ForMember(d => d.Name, o => o.MapFrom(x => x.Title))
+				.ForMember(d => d.CategoryId, opt => opt.Ignore());
 		}
 	}
 }

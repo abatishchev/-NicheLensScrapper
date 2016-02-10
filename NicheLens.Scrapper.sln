@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.Api", "NicheLens.Scrapper.Api\NicheLens.Scrapper.Api.csproj", "{76070EFD-76C8-4162-9E68-29EDA9358607}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B7932548-2AAA-422F-8047-2AC4255D1429} = {B7932548-2AAA-422F-8047-2AC4255D1429}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.Api.Tests", "NicheLens.Scrapper.Api.Tests\NicheLens.Scrapper.Api.Tests.csproj", "{83A220BB-5BFF-4753-97BB-E83E02962E97}"
 EndProject
@@ -16,6 +19,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.Api.Client", "NicheLens.Scrapper.Api.Client\NicheLens.Scrapper.Api.Client.csproj", "{89697AE0-49AF-45E1-A347-B15F47BE2A5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.WebJobs", "NicheLens.Scrapper.WebJobs\NicheLens.Scrapper.WebJobs.csproj", "{88920C8F-BBF7-4F27-8DF7-CFC6FD9E86FA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B7932548-2AAA-422F-8047-2AC4255D1429} = {B7932548-2AAA-422F-8047-2AC4255D1429}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NicheLens.Scrapper.WebJobs.Tests", "NicheLens.Scrapper.WebJobs.Tests\NicheLens.Scrapper.WebJobs.Tests.csproj", "{6DA9DE86-E6F9-4081-B556-FC1159B6A7A4}"
 EndProject

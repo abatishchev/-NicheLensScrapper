@@ -1,17 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 
-using NicheLens.Scrapper.Data.Models;
+using Ab.Amazon.Data;
 
 namespace NicheLens.Scrapper.Data.Configuration
 {
-	public class CategoryConfiguration : EntityTypeConfiguration<Category>
+	public class CategoryConfiguration : EntityTypeConfiguration<CategoryEntity>
 	{
 		public CategoryConfiguration()
 		{
 			ToTable("Category").HasKey(x => x.CategoryId);
 
 			Property(x => x.CategoryId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+			HasMany(x => x.Products).WithRequired(x => x.Category)
+									.HasForeignKey(x => x.CategoryId);
 		}
 	}
 }

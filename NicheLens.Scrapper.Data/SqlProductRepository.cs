@@ -2,7 +2,8 @@
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
 
-using NicheLens.Scrapper.Data.Models;
+using Ab.Amazon;
+using Ab.Amazon.Data;
 
 namespace NicheLens.Scrapper.Data
 {
@@ -15,15 +16,14 @@ namespace NicheLens.Scrapper.Data
 			_db = db;
 		}
 
-		public Task<Product> GetProduct(Guid productId)
+		public Task<ProductEntity> GetProduct(Guid productId)
 		{
 			return _db.Products.FindAsync(productId);
 		}
 
-		public Task MergeProducts(Product[] products)
+		public Task UpdateProducts(ProductEntity[] products)
 		{
 			_db.Products.AddOrUpdate(p => p.Asin, products);
-
 			return _db.SaveChangesAsync();
 		}
 	}

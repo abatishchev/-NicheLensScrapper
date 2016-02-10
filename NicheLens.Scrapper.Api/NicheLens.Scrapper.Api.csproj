@@ -289,6 +289,12 @@
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <Content Include="Properties\webjobs-list.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NicheLens.Scrapper.Data\NicheLens.Scrapper.Data.csproj">
+      <Project>{9A2AF737-E2E2-471A-9652-4F31F35E637E}</Project>
+      <Name>NicheLens.Scrapper.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
