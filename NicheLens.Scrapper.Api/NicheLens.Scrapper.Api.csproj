@@ -41,20 +41,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ab">
-      <HintPath>..\packages\Ab.0.1.18\lib\net45\Ab.dll</HintPath>
+    <Reference Include="Ab, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ab.0.1.21\lib\net45\Ab.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ab.Amazon">
-      <HintPath>..\packages\Ab.Amazon.0.1.17\lib\net45\Ab.Amazon.dll</HintPath>
+    <Reference Include="Ab.Amazon, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ab.Amazon.0.1.20\lib\net45\Ab.Amazon.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ab.Amazon.Azure">
-      <HintPath>..\packages\Ab.Amazon.Azure.0.1.19\lib\net45\Ab.Amazon.Azure.dll</HintPath>
+    <Reference Include="Ab.Amazon.Azure, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ab.Amazon.Azure.0.1.22\lib\net45\Ab.Amazon.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ab.Azure">
-      <HintPath>..\packages\Ab.Azure.0.1.28\lib\net45\Ab.Azure.dll</HintPath>
+    <Reference Include="Ab.Azure, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ab.Azure.0.1.31\lib\net45\Ab.Azure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ab.SimpleInjector">
@@ -125,8 +125,8 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.ApplicationInsights.Web.TelemetryChannel, Version=1.0.0.4227, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.TelemetryChannel.1.0.0\lib\net45\Microsoft.ApplicationInsights.Web.TelemetryChannel.dll</HintPath>
+    <Reference Include="Microsoft.ApplicationInsights.Web.TelemetryChannel, Version=1.1.0.1909, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.TelemetryChannel.1.1.0\lib\net45\Microsoft.ApplicationInsights.Web.TelemetryChannel.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Azure.Documents.Client, Version=1.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
