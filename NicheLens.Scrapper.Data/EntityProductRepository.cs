@@ -7,11 +7,11 @@ using Ab.Amazon.Data;
 
 namespace NicheLens.Scrapper.Data
 {
-	public sealed class SqlProductRepository : IProductRepository
+	public sealed class EntityProductRepository : IProductRepository
 	{
 		private readonly IModelContext _db;
 
-		public SqlProductRepository(IModelContext db)
+		public EntityProductRepository(IModelContext db)
 		{
 			_db = db;
 		}

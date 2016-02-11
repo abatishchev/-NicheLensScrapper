@@ -8,11 +8,11 @@ using Ab.Amazon.Data;
 
 namespace NicheLens.Scrapper.Data
 {
-	public sealed class SqlCategoryRepository : ICategoryRepository
+	public sealed class EntityCategoryRepository : ICategoryRepository
 	{
 		private readonly IModelContext _db;
 
-		public SqlCategoryRepository(IModelContext db)
+		public EntityCategoryRepository(IModelContext db)
 		{
 			_db = db;
 		}
@@ -33,7 +33,7 @@ namespace NicheLens.Scrapper.Data
 
 		public Task<int> UpdateCategories(CategoryEntity[] categories)
 		{
-			_db.Categories.AddOrUpdate(c => c.SearchIndex, categories);
+			_db.Categories.AddOrUpdate(c => c.NodeId, categories);
 			return _db.SaveChangesAsync();
 		}
 	}

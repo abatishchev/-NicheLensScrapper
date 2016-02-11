@@ -193,8 +193,8 @@ namespace NicheLens.Scrapper.WebJobs
 
 			#region Data
 			container.RegisterLifetimeScope<IModelContext, ModelContext>();
-			container.Register<ICategoryRepository, SqlCategoryRepository>();
-			container.Register<IProductRepository, SqlProductRepository>();
+			container.Register<ICategoryRepository, EntityCategoryRepository>();
+			container.Register<IProductRepository, EntityProductRepository>();
 			#endregion
 		}
 

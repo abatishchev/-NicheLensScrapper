@@ -79,8 +79,8 @@
     <Compile Include="Models\CategoryMappingProfile.cs" />
     <Compile Include="Models\ProductMappingProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlCategoryRepository.cs" />
-    <Compile Include="SqlProductRepository.cs" />
+    <Compile Include="EntityCategoryRepository.cs" />
+    <Compile Include="EntityProductRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
