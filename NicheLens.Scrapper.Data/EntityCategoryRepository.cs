@@ -34,7 +34,7 @@ namespace NicheLens.Scrapper.Data
 
 		public async Task UpdateCategories(CategoryEntity[] categories)
 		{
-			var existing = await GetCategory(categories.Select(p => p.CategoryId).ToArray()).ToArrayAsync();
+			var existing = await GetCategories(categories).ToArrayAsync();
 			if (existing.Any())
 				await DeleteCategories(existing);
 
@@ -43,11 +43,13 @@ namespace NicheLens.Scrapper.Data
 			await _db.SaveChangesAsync();
 		}
 
-		private IQueryable<CategoryEntity> GetCategory(ICollection<Guid> ids)
+		private IQueryable<CategoryEntity> GetCategories(ICollection<CategoryEntity> categories)
 		{
-			return from p in _db.Categories
-				   where ids.Contains(p.CategoryId)
-				   select p;
+			var ids = categories.Select(p => p.CategoryId).ToArray();
+			var nodeIds = categories.Select(p => p.NodeId).ToArray();
+			return from c in _db.Categories
+				   where ids.Contains(c.CategoryId) || nodeIds.Contains(c.NodeId)
+				   select c;
 		}
 
 		private Task DeleteCategories(ICollection<CategoryEntity> categories)

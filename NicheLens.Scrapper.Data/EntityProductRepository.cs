@@ -25,7 +25,7 @@ namespace NicheLens.Scrapper.Data
 
 		public async Task UpdateProducts(ProductEntity[] products)
 		{
-			var existing = await GetProduct(products.Select(p => p.ProductId).ToArray()).ToArrayAsync();
+			var existing = await GetProducts(products).ToArrayAsync();
 			if (existing.Any())
 				await DeleteProducts(existing);
 
@@ -34,10 +34,12 @@ namespace NicheLens.Scrapper.Data
 			await _db.SaveChangesAsync();
 		}
 
-		private IQueryable<ProductEntity> GetProduct(ICollection<Guid> ids)
+		private IQueryable<ProductEntity> GetProducts(ICollection<ProductEntity> products)
 		{
+			var ids = products.Select(p => p.ProductId).ToArray();
+			var asins = products.Select(p => p.Asin).ToArray();
 			return from p in _db.Products
-				   where ids.Contains(p.ProductId)
+				   where ids.Contains(p.ProductId) || asins.Contains(p.Asin)
 				   select p;
 		}
 
