@@ -13,5 +13,5 @@
 	DetailsPageUrl VarChar(255) not null,
 	CustomerReviewsUrl VarChar(255) not null,
 
-	CategoryId  UniqueIdentifier not null
+	CategoryId  UniqueIdentifier null
 )
