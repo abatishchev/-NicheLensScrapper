@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,26 +34,26 @@ namespace NicheLens.Scrapper.Data
 
 		public async Task UpdateCategories(CategoryEntity[] categories)
 		{
-			foreach (var category in categories)
-			{
-				var existingProduct = await GetCategory(category.NodeId);
-				if (existingProduct != null)
-					await DeleteCategory(existingProduct);
+			var existing = await GetCategory(categories.Select(p => p.CategoryId).ToArray()).ToArrayAsync();
+			if (existing.Any())
+				await DeleteCategories(existing);
 
-				_db.Categories.Add(category);
-			}
+			_db.Categories.AddRange(categories);
 
 			await _db.SaveChangesAsync();
 		}
 
-		private Task<CategoryEntity> GetCategory(long nodeId)
+		private IQueryable<CategoryEntity> GetCategory(ICollection<Guid> ids)
 		{
-			return _db.Categories.FirstOrDefaultAsync(c => c.NodeId == nodeId);
+			return from p in _db.Categories
+				   where ids.Contains(p.CategoryId)
+				   select p;
 		}
 
-		private Task DeleteCategory(CategoryEntity category)
+		private Task DeleteCategories(ICollection<CategoryEntity> categories)
 		{
-			_db.Categories.Remove(category);
+			_db.Categories.RemoveRange(categories);
+
 			return _db.SaveChangesAsync();
 		}
 	}

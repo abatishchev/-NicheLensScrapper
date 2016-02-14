@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Ab.Amazon;
@@ -23,26 +25,26 @@ namespace NicheLens.Scrapper.Data
 
 		public async Task UpdateProducts(ProductEntity[] products)
 		{
-			foreach (var product in products)
-			{
-				var existingProduct = await GetProduct(product.Asin);
-				if (existingProduct != null)
-					await DeleteProduct(existingProduct);
+			var existing = await GetProduct(products.Select(p => p.ProductId).ToArray()).ToArrayAsync();
+			if (existing.Any())
+				await DeleteProducts(existing);
 
-				_db.Products.Add(product);
-			}
+			_db.Products.AddRange(products);
 
 			await _db.SaveChangesAsync();
 		}
 
-		private Task<ProductEntity> GetProduct(string asin)
+		private IQueryable<ProductEntity> GetProduct(ICollection<Guid> ids)
 		{
-			return _db.Products.FirstOrDefaultAsync(p => p.Asin == asin);
+			return from p in _db.Products
+				   where ids.Contains(p.ProductId)
+				   select p;
 		}
 
-		private Task DeleteProduct(ProductEntity product)
+		private Task DeleteProducts(ICollection<ProductEntity> products)
 		{
-			_db.Products.Remove(product);
+			_db.Products.RemoveRange(products);
+
 			return _db.SaveChangesAsync();
 		}
 	}
