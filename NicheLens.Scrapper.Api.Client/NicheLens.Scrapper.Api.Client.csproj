@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ab, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ab.0.1.21\lib\net45\Ab.dll</HintPath>
+      <HintPath>..\packages\Ab.0.1.22\lib\net45\Ab.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AutoMapper, Version=4.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
