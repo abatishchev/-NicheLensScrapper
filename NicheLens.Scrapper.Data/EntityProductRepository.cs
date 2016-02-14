@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Entity.Migrations;
+using System.Data.Entity;
 using System.Threading.Tasks;
 
 using Ab.Amazon;
@@ -21,9 +21,28 @@ namespace NicheLens.Scrapper.Data
 			return _db.Products.FindAsync(productId);
 		}
 
-		public Task UpdateProducts(ProductEntity[] products)
+		public async Task UpdateProducts(ProductEntity[] products)
 		{
-			_db.Products.AddOrUpdate(p => p.Asin, products);
+			foreach (var product in products)
+			{
+				var existingProduct = await GetProduct(product.Asin);
+				if (existingProduct != null)
+					await DeleteProduct(existingProduct);
+
+				_db.Products.Add(product);
+			}
+
+			await _db.SaveChangesAsync();
+		}
+
+		private Task<ProductEntity> GetProduct(string asin)
+		{
+			return _db.Products.FirstOrDefaultAsync(p => p.Asin == asin);
+		}
+
+		private Task DeleteProduct(ProductEntity product)
+		{
+			_db.Products.Remove(product);
 			return _db.SaveChangesAsync();
 		}
 	}

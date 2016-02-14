@@ -1,5 +1,4 @@
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,15 +24,34 @@ namespace NicheLens.Scrapper.Data
 			return q.ToArrayAsync();
 		}
 
-		public Task<int> SaveCategory(CategoryEntity category)
+		public Task SaveCategory(CategoryEntity category)
 		{
 			_db.Categories.Add(category);
 			return _db.SaveChangesAsync();
 		}
 
-		public Task<int> UpdateCategories(CategoryEntity[] categories)
+		public async Task UpdateCategories(CategoryEntity[] categories)
 		{
-			_db.Categories.AddOrUpdate(c => c.NodeId, categories);
+			foreach (var category in categories)
+			{
+				var existingProduct = await GetCategory(category.NodeId);
+				if (existingProduct != null)
+					await DeleteCategory(existingProduct);
+
+				_db.Categories.Add(category);
+			}
+
+			await _db.SaveChangesAsync();
+		}
+
+		private Task<CategoryEntity> GetCategory(long nodeId)
+		{
+			return _db.Categories.FirstOrDefaultAsync(c => c.NodeId == nodeId);
+		}
+
+		private Task DeleteCategory(CategoryEntity category)
+		{
+			_db.Categories.Remove(category);
 			return _db.SaveChangesAsync();
 		}
 	}
