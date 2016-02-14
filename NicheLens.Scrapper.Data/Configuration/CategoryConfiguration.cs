@@ -12,9 +12,6 @@ namespace NicheLens.Scrapper.Data.Configuration
 			ToTable("Category").HasKey(x => x.CategoryId);
 
 			Property(x => x.CategoryId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-
-			HasMany(x => x.Products).WithRequired(x => x.Category)
-									.HasForeignKey(x => x.CategoryId);
 		}
 	}
 }
